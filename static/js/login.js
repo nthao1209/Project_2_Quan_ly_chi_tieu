@@ -1,36 +1,34 @@
 document.addEventListener("DOMContentLoaded", function () {
     const form = document.querySelector("form");
-    
-    form.addEventListener("submit", async function (event) {
-        event.preventDefault();
-        
+
+    form.addEventListener("submit", async function(event) {
+        event.preventDefault(); // Prevent the default form submission
+
         const formData = new FormData(form);
         const data = {
-            name: formData.get("Username"),
             email: formData.get("email"),
-            password: formData.get("password"),
-            phone: formData.get("phone"),
+            password: formData.get("pass"),    
         };
-        
+
         try {
-            const response = await fetch("http://127.0.0.1:5000/register", {
+            const response = await fetch("/login", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify(data),
             });
-            
+
             const result = await response.json();
-            
+
             if (response.ok) {
-                alert("Đăng ký thành công!");
-                window.location.href = "/"; // Chuyển hướng đến trang đăng nhập
+                alert("Đăng nhập thành công!");
+                window.location.href = "/register"; 
             } else {
-                alert(result.message);
+                alert(result.message || "Đăng nhập thất bại!");
             }
         } catch (error) {
-            console.error("Lỗi đăng ký:", error);
+            console.error("Lỗi đăng nhập:", error);
             alert("Đã xảy ra lỗi, vui lòng thử lại!");
         }
     });

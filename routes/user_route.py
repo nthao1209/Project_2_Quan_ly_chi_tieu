@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, render_template
 from werkzeug.security import generate_password_hash
 from flask_mail import Mail as mail
 from flask_mail import Message
@@ -8,63 +8,67 @@ from . import db, User
 from twilio.rest import Client 
 
 # Khởi tạo Blueprint
-user_bp = Blueprint('user', __name__, url_prefix='/users')
+user_bp = Blueprint('user', __name__)
 redis_client = redis.StrictRedis(host='localhost', port=6379, db=0, decode_responses=True)
 
 otp_storage = {}
 
 
 def check_password_hash(password_hash, password):
-
-    return password_hash == generate_password_hash(password)
+    return password_hash == password
 
 #Đăng ký
-@user_bp.route("/register", methods=["POST"])
+@user_bp.route("/register", methods=["GET","POST"])
 def register():
-    data = request.json
+    if request.method == 'POST':
+        data = request.json
 
-    if not data:
-        return jsonify({"message": "Dữ liệu không hợp lệ"}), 400
+        if not data:
+            return jsonify({"message": "Dữ liệu không hợp lệ"}), 400
 
+        
+        name = data.get("name")
+        email = data.get("email")
+        password = data.get("password")
+        phone = data.get("phone")
+
+        if not name or not email or not phone or not password:
+            return jsonify({"message": "Thiếu thông tin bắt buộc"}), 400
+
+        if User.query.filter_by(email=email).first():
+            return jsonify({"message": "Email đã tồn tại"}), 400
+
+        new_user = User(name=name, email=email,phone=phone, password=password)
+        db.session.add(new_user)
+        db.session.commit()
+
+        return jsonify({"message": "Đăng ký thành công"}), 201
     
-    name = data.get("name")
-    email = data.get("email")
-    password = data.get("password")
-    phone = data.get("phone")
-
-    if not name or not email or not phone or not password:
-        return jsonify({"message": "Thiếu thông tin bắt buộc"}), 400
-
-    if User.query.filter_by(email=email).first():
-        return jsonify({"message": "Email đã tồn tại"}), 400
-    
-    hash_password = generate_password_hash(password)
-    new_user = User(name=name, email=email,phone=phone, password=hash_password)
-    db.session.add(new_user)
-    db.session.commit()
-
-    return jsonify({"message": "Đăng ký thành công"}), 201
+    return render_template("register.html")
 
 #Đăng nhập
-@user_bp.route("/login",methods=["POST"])
+@user_bp.route("/login",methods=["GET","POST"])
 def login():
-    data = request.json
+    if request.method == 'POST':
+        data = request.json
 
-    if not data:
-        return jsonify({"message": "Dữ liệu không hợp lệ"}), 400
+        if not data:
+            return jsonify({"message": "Dữ liệu không hợp lệ"}), 400
 
-    email = data.get("email")
-    password = data.get("password")
+        email = data.get("email")
+        password = data.get("password")
 
-    if not email or not password:
-        return jsonify({"message": "Thiếu thông tin bắt buộc"}), 400
+        if not email or not password:
+            return jsonify({"message": "Thiếu thông tin bắt buộc"}), 400
 
-    user = User.query.filter_by(email=email).first()
+        user = User.query.filter_by(email=email).first()
 
-    if not user or not check_password_hash(user.password, password):
-        return jsonify({"message": "Sai email hoặc mật khẩu"}), 401
+        if not user or not check_password_hash(user.password, password):
+            print(email, password)
+            return jsonify({"message": "Sai email hoặc mật khẩu"}), 401
 
-    return jsonify({"message": "Đăng nhập thành công"}), 200
+        return jsonify({"message": "Đăng ký thành công"}), 200
+    return render_template("login.html")
 
 #Cập nhật thông tin người dùng
 @user_bp.route("/<int:id>", methods=["PUT"])
@@ -98,7 +102,7 @@ def update_user(id):
     return jsonify({"message": "Cập nhật thành công"}), 200
 
 #Quên mật khẩu
-@user_bp.route("/forgot-password", methods=["POST"])
+@user_bp.route("/forgot-password", methods=["GET","POST"])
 def forgot_password():
     data = request.json
 

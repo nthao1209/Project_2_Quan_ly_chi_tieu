@@ -1,0 +1,102 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #fff;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #ff7096;
+  color: white;
+  padding: 10px 16px;
+}
+
+.header .back-button {
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.header .title {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.header .menu {
+  display: flex;
+  gap: 10px;
+}
+
+.header .menu-item {
+  font-size: 20px;
+}
+
+.tab-container {
+  display: flex;
+  justify-content: space-around;
+  background-color: #ff9ab3;
+  padding: 10px 0;
+}
+
+.tab {
+  background-color: white;
+  border-radius: 20px;
+  border: none;
+  font-size: 16px;
+  padding: 6px 16px;
+  cursor: pointer;
+}
+
+.tab.active {
+  background-color: #ff7096;
+  color: white;
+}
+
+.category-list {
+  padding: 16px;
+}
+
+.group-title {
+  font-size: 14px;
+  color: #888;
+  margin-bottom: 10px;
+}
+
+.category-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px;
+  border: 1px solid #eee;
+  margin-bottom: 6px;
+  border-radius: 8px;
+}
+
+.category-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.category-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.menu-icon {
+  color: #ff7096;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.delete-button {
+  background: red;
+  color: white;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+}

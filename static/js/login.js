@@ -2,13 +2,18 @@ document.addEventListener("DOMContentLoaded", function () {
     const form = document.querySelector("form");
 
     form.addEventListener("submit", async function(event) {
-        event.preventDefault(); // Prevent the default form submission
+        event.preventDefault(); // Ngăn form gửi request mặc định
 
         const formData = new FormData(form);
         const data = {
             email: formData.get("email"),
-            password: formData.get("pass"),    
+            password: formData.get("password"),
         };
+
+        if (!data.email || !data.password) {
+            alert("Vui lòng nhập đầy đủ email và mật khẩu!");
+            return;
+        }
 
         try {
             const response = await fetch("/login", {
@@ -23,7 +28,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             if (response.ok) {
                 alert("Đăng nhập thành công!");
-                window.location.href = "/register"; 
+                window.location.href = "/"; 
             } else {
                 alert(result.message || "Đăng nhập thất bại!");
             }

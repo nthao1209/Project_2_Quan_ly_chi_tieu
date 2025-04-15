@@ -1,6 +1,8 @@
 from flask import Flask
 from models import db, User  # Import after adjusting sys.path
 
+from flask import Blueprint
+
 
 def create_app():
     app = Flask(__name__)

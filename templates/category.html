@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Danh mục</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/category.css') }}">
+  <script src="{{ url_for('static', filename='js/category.js') }}" defer></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <style>
+    .tab-container button {
+      margin-right: 10px;
+    }
+    .category-list {
+      display: none;
+    }
+    .category-list.active {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="back-button">←</div>
+    <div class="title">Danh mục</div>
+  </div>
+
+  <div class="tab-container">
+    <button class="tab active" onclick="showCategory('expenses')">
+      <i class="fa fa-shopping-cart"></i> Chi tiêu
+    </button>
+    <button class="tab" onclick="showCategory('income')">
+      <i class="fas fa-wallet"></i> Thu nhập
+    </button>
+  </div>
+
+  <!-- Danh mục Chi tiêu -->
+  <div class="category-list expenses active">
+    <div class="group-title">Danh mục chi tiêu</div>
+    {% for category in expenses_categories %}
+      <div class="category-item" data-id="{{ category.category_id }}" data-type="chi tiêu">
+        <div class="category-info">
+          <span class="icon">{{ category.icon }}</span>
+          <span class="text">{{ category.name }}</span>
+        </div>
+        <div class="category-actions">
+          <div class="menu-icon"><i class="fas fa-bars"></i></div>
+          <div class="delete-button" data-id="{{ category.category_id }}">Xóa</div>
+      </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  <!-- Danh mục Thu nhập -->
+  <div class="category-list income">
+    <div class="group-title">Danh mục thu nhập</div>
+    {% for category in income_categories %}
+      <div class="category-item" data-id="{{category.category_id}}" data-type="thu nhập">
+        <div class="category-info">
+          <span class="icon">{{ category.icon }}</span>
+          <span class="text">{{ category.name }}</span>
+        </div>
+        <div class="category-actions">
+          <div class="menu-icon"><i class="fas fa-bars"></i></div>
+          <div class="delete-button" data-id="{{category.category_id }}">Xóa</div>
+      </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  <div class="add-button">+ Thêm vào</div>
+
+  <script>
+    function showCategory(category) {
+      const lists = document.querySelectorAll('.category-list');
+      lists.forEach(list => list.classList.remove('active'));
+      document.querySelector(`.category-list.${category}`).classList.add('active');
+
+      const tabs = document.querySelectorAll('.tab');
+      tabs.forEach(tab => tab.classList.remove('active'));
+      if (category === 'expenses') {
+        tabs[0].classList.add('active');
+      } else if (category === 'income') {
+        tabs[1].classList.add('active');
+      }
+    }
+  </script>
+
+  <script>
+    document.querySelector('.back-button').addEventListener('click', function() {
+      window.history.back(); // Quay lại trang trước
+    });
+  </script>
+</body>
+</html>

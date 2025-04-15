@@ -1,7 +1,7 @@
 from . import db
 class Account(db.Model):
     __tablename__ = 'accounts'
-    account_id = db.Column(db.Integer, primary_key=True)
+    account_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
     account_name = db.Column(db.String(100), nullable=False)
     balance = db.Column(db.Numeric(15, 2), default=0.00)

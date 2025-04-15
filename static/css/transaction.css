@@ -1,0 +1,110 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background-color: #fefefe;
+    color: #333;
+  }
+  
+  .header-bar {
+    display: flex;
+    align-items: center;
+    background-color: #f48fb1;
+    padding: 15px;
+    color: white;
+    justify-content: space-between;
+  }
+  
+  .back-btn {
+    text-decoration: none;
+    color: white;
+    font-size: 20px;
+  }
+  
+  main {
+    padding: 20px;
+  }
+  
+  .category-card {
+    background: #fff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  }
+  
+  .category-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .icon {
+    font-size: 32px;
+  }
+  
+  .category-stats {
+    margin-top: 10px;
+  }
+  
+  .amount {
+    color: green;
+    font-weight: bold;
+  }
+  
+  .time-picker {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .time-picker select {
+    padding: 5px;
+    font-size: 14px;
+  }
+  
+  .edit-btn {
+    background-color: #4caf50;
+    color: white;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 15px 0;
+  }
+  
+  .hidden-form {
+    display: none;
+    margin-top: 10px;
+    background: #f1f1f1;
+    padding: 15px;
+    border-radius: 10px;
+  }
+  
+  .hidden-form input,
+  .hidden-form select,
+  .hidden-form textarea {
+    display: block;
+    width: 100%;
+    margin: 8px 0;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .hidden-form button {
+    margin-top: 10px;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .hidden-form button[type="submit"] {
+    background-color: #2196f3;
+    color: white;
+  }
+  
+  .hidden-form button[type="button"] {
+    background-color: #e0e0e0;
+  }
+  

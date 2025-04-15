@@ -1,4 +1,5 @@
-from flask import Blueprint, jsonify, request, render_template
+from flask import Blueprint, jsonify, request, render_template,session,redirect,url_for
+import os
 from werkzeug.security import generate_password_hash
 from flask_mail import Mail as mail
 from flask_mail import Message
@@ -6,6 +7,8 @@ import redis
 import random
 from . import db, User
 from twilio.rest import Client 
+from pathlib import Path
+
 
 # Khởi tạo Blueprint
 user_bp = Blueprint('user', __name__)
@@ -13,9 +16,16 @@ redis_client = redis.StrictRedis(host='localhost', port=6379, db=0, decode_respo
 
 otp_storage = {}
 
+img_path = Path("/assets/imgages")
+img_ext = {"jpg", "jpeg", "png", "gif"}
 
-def check_password_hash(password_hash, password):
-    return password_hash == password
+
+def allowed_file(filename):
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in img_ext
+
+
+def check_password(real_password, password):
+    return real_password == password
 
 #Đăng ký
 @user_bp.route("/register", methods=["GET","POST"])
@@ -28,6 +38,8 @@ def register():
 
         
         name = data.get("name")
+        ngay_sinh = data.get("ngay_sinh")
+        gioi_tinh = data.get("gioi_tinh")
         email = data.get("email")
         password = data.get("password")
         phone = data.get("phone")
@@ -38,7 +50,7 @@ def register():
         if User.query.filter_by(email=email).first():
             return jsonify({"message": "Email đã tồn tại"}), 400
 
-        new_user = User(name=name, email=email,phone=phone, password=password)
+        new_user = User(name=name,ngay_sinh=ngay_sinh,gioi_tinh=gioi_tinh, email=email,phone=phone, password=password)
         db.session.add(new_user)
         db.session.commit()
 
@@ -53,89 +65,91 @@ def login():
         data = request.json
 
         if not data:
-            return jsonify({"message": "Dữ liệu không hợp lệ"}), 400
+            return render_template("login.html")
 
         email = data.get("email")
         password = data.get("password")
 
         if not email or not password:
-            return jsonify({"message": "Thiếu thông tin bắt buộc"}), 400
+            return render_template("login.html")
 
         user = User.query.filter_by(email=email).first()
 
-        if not user or not check_password_hash(user.password, password):
+        if not user or not check_password(user.password, password):
             print(email, password)
             return jsonify({"message": "Sai email hoặc mật khẩu"}), 401
-
-        return jsonify({"message": "Đăng ký thành công"}), 200
+        
+        session["user_id"] = user.user_id
+        return jsonify({"message": "Đăng nhập thành công"}), 200
     return render_template("login.html")
 
-#Cập nhật thông tin người dùng
-@user_bp.route("/<int:id>", methods=["PUT"])
-def update_user(id):
-    data = request.json
+#Cập nhật dữ liệu người dùng
+@user_bp.route("/editProfile", methods=["GET", "POST"])
 
-    if not data:
-        return jsonify({"message": "Dữ liệu không hợp lệ"}), 400
-
-    name = data.get("name")
-    email = data.get("email")
-    phone = data.get("phone")
-    password = data.get("password")
-
-    user = User.query.get(id)
-
+def editProfile():
+    # Kiểm tra xem người dùng đã đăng nhập chưa
+    if not session.get("user_id"):
+        return redirect(url_for("user.login"))
+    # Lấy thông tin người dùng từ cơ sở dữ liệu
+    user_id = session["user_id"]
+    user = User.query.get(user_id)
     if not user:
-        return jsonify({"message": "Người dùng không tồn tại"}), 404
+        return redirect(url_for("user.login"))
+    # Cập nhật ảnh đại diệndiện
+    if request.method == "POST":
+        if "file" in request.files:
+            file = request.files["file"]
+            if file and allowed_file(file.filename):
+                filename = f"{user_id}.jpg"
+                file_path = img_path/filename
+                file.save(str(file_path))
 
-    if name:
+                user.img = f"assets/images/{filename}"
+
+    # Xử lý khi người dùng gửi yêu cầu xóa ảnh
+    if request.method == "POST":
+        if "delete_avatar" in request.form:
+            if user.img:
+                img_filename = Path(user.img).name
+                img_file_path= img_path/img_filename
+                
+                if img_file_path.exists():  # Kiểm tra xem tệp có tồn tại không
+                    img_file_path.unlink()
+                user.img = None
+                db.session.commit()
+
+        return jsonify({"message": "Xóa ảnh đại diện thành công"}), 200
+
+
+    # Xử lý khi người dùng gửi thông tin cập nhật
+    if request.method == "POST":
+        data = request.json  # Đọc dữ liệu từ JSON
+
+        name = data.get("name", user.name)
+        email = data.get("email", user.email)
+        phone = data.get("phone", user.phone)
+        oldPassword = data.get("currentPassword")
+        password = data.get("newPassword")
+
+        if not email:  # Kiểm tra nếu email không tồn tại
+            return jsonify({"message": "Email không được để trống"}), 400
+
+        if user.password != oldPassword:  # Kiểm tra mật khẩu cũ
+            return jsonify({"message": "Mật khẩu cũ không chính xác"}), 400
+        # Cập nhật thông tin người dùng
         user.name = name
-    if email:
         user.email = email
-    if phone:
         user.phone = phone
-    if password:
-        user.password = generate_password_hash(password)
+        user.password = password
 
-    db.session.commit()
+        db.session.commit()
 
-    return jsonify({"message": "Cập nhật thành công"}), 200
-
-#Quên mật khẩu
-@user_bp.route("/forgot-password", methods=["GET","POST"])
-def forgot_password():
-    data = request.json
-
-    if not data:
-        return jsonify({"message": "Dữ liệu không hợp lệ"}), 400
-
-    email = data.get("email")
-    phone = data.get("phone")
-
-    if not email or not phone:
-        return jsonify({"message": "Thiếu thông tin bắt buộc"}), 400
-
-    user = User.query.filter((User.email == email, User.phone == phone)).first()
-
-    if not user:
-        return jsonify({"message": "Email hoặc số điện thoại không tồn tại"}), 404
-
-    otp = random.randint(100000, 999999)
-    redis_client.setex(user.email, 300, otp)  # Lưu OTP vào Redis với thời gian sống 5 phút
-
-    if email:
-        msg = Message("Đặt lại mật khẩu",sender="admin@gmail.com",recipients=[email])
-        msg.body = f"Mã OTP của bạn là: {otp}"
-        mail.send(msg)
-        return jsonify({"message": "Mã OTP đã được gửi đến email"}), 200
-
-#    elif phone:  
-#      twilio_client.messages.create(
-#           body=f"Mã OTP của bạn là: {otp}",
-#           from_=TWILIO_PHONE_NUMBER,
-#           to=phone
-#       )
-#      return jsonify({"message": "Mã OTP đã được gửi đến số điện thoại"}), 2
- 
+        return redirect(url_for("home.home"))
     
+    for file in img_path.rglob("*"):
+        if file.suffix.lower() in img_ext:
+            if user.img == str(file):
+               user.img = str(img_path / file.name)
+               break
 
+    return render_template("editProfile.html",user=user)

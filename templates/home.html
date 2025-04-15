@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sổ Cái</title>
+    <link rel="stylesheet" href="static/css/home.css">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
+    <div class="header">
+        <i class="fas fa-bars"></i>
+        <span>Sổ cái mặc định</span>
+        <button class="invoice-btn">Hóa đơn</button>
+        <button class="personal-btn">Cá nhân</button>
+    </div>
+
+    <div class="top-buttons">
+        <button class="btn ledger"><i class="fas fa-book"></i> Sổ cái</button>
+        <button class="btn add"><i class="fas fa-plus"></i> Thêm v...</button>
+    </div>
+
+    <div class="summary-box">
+        <div class="date-picker">
+            <i class="fas fa-chevron-left"></i>
+            <span>4/2025</span>
+            <i class="fas fa-chevron-right"></i>
+        </div>
+        <div class="summary-content">
+            <div class="summary-item">
+                <span class="amount">$0</span>
+                <span>Toàn bộ</span>
+            </div>
+            <div class="summary-item">
+                <span class="amount">$0</span>
+                <span>Thu nhập</span>
+            </div>
+            <div class="summary-item">
+                <span class="amount">$0</span>
+                <span>Chi tiêu</span>
+            </div>
+        </div>
+        <div class="filter-buttons">
+            <button>Hàng tuần</button>
+            <button class="active">Hàng tháng</button>
+            <button>Hàng năm</button>
+        </div>
+    </div>
+
+    <div class="empty-state">
+        <span>😔</span>
+        <p>Không có hồ sơ trong giai đoạn hiện nay!</p>
+    </div>
+
+    <div class="bottom-menu">
+        <button><i class="fas fa-book"></i> Sách bỏ túi</button>
+        <button><i class="fas fa-wallet"></i> Ví tiền</button>
+        <button><i class="fas fa-chart-pie"></i> Phân tích</button>
+        <button><i class="fas fa-ellipsis-h"></i> Thêm</button>
+    </div>
+
+    <button class="floating-btn"><i class="fas fa-pencil-alt"></i></button>
+    <a href="/editProfile" class="edit-profile-btn">Edit</a>
+    <a href="/register" class="register-btn">Register</a>
+    <a href="/categories-page" class="category-btn">Category</a>
+    <a href="/transactions" class="transaction-btn">Transaction</a>
+    <a href="/bank_account" class="bank-account-btn">Bank Account</a>
+
+</body>
+</html>

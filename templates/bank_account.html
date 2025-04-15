@@ -1,0 +1,37 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quản lý tài khoản</title>
+  <link rel="stylesheet" href="bank_account.css">
+</head>
+<body>
+  <div class="header">
+    <button onclick="goBack()">&#8592;</button>
+    <h1>Quản lý tài khoản</h1>
+    <button onclick="saveAccounts()">&#10003;</button>
+  </div>
+  <div class="account-list" id="accountList">
+    <div class="account-item">
+      <input type="checkbox" checked>
+      <img src="https://img.icons8.com/color/48/000000/bank-card-back-side.png" alt="card">
+      <span>Tài khoản mặc định</span>
+    </div>
+  </div>
+
+  <div class="add-button">
+    <button onclick="addAccount()">+Thêm vào</button>
+  </div>
+
+  <div class="account-list" id="accoutList">
+    {% for account in accounts %}
+        <div class = "account-item">
+            <img src="https://img.icons8.com/color/48/000000/bank-card-back-side.png" alt="card">
+            <span>{{ account.account_name }}-{{account.balance}}-{{account.currency}}</span>
+            <button class="delete-account" data-account_id="{{ account_id}}">Xóa</button>  
+        </div>
+    {% endfor %}
+  </div>
+<script src="{{ url_for('static', filename='js/bank_account.js') }}"></script>

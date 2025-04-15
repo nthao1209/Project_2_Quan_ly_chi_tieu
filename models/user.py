@@ -8,7 +8,11 @@ class User(db.Model):
     password = db.Column(db.String(255), nullable=False)
     phone = db.Column(db.String(20), unique=True)
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
-
+    ngay_sinh = db.Column(db.Date, nullable=False)  
+    gioi_tinh = db.Column(db.String(15), nullable=False)
+    __table_args__ = (
+        db.CheckConstraint("gioi_tinh IN ('Nam', 'Nữ', 'Không cho biết')", name="gioi_tinh_check"),
+    )
         
 
     accounts = db.relationship('Account', back_populates='user', cascade='all, delete')

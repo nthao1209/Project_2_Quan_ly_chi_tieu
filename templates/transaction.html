@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Giao dịch</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/transaction.css') }}">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+</head>
+<body>
+  <div class="header-bar">
+    <a href="{{ url_for('category.categories_page') }}" class="back-btn">←</a>
+    <h1>Giao dịch</h1>
+  </div>
+
+  <main>
+    <section class="category-card">
+      <div class="category-header">
+        <div>
+          <h2>{{ category.name }}</h2>
+        </div>
+        <div class="icon">{{ category.icon }}</div>
+      </div>
+
+      <div class="category-stats">
+        <div class="time-picker">
+          <label for="monthSelect">Tháng:</label>
+          <select id="monthSelect"></select>
+          <label for="yearSelect">Năm:</label>
+          <select id="yearSelect"></select>
+        </div>
+        <p class="amount">₫</p>
+      </div>
+
+      <button id="toggleForm" class="add-btn">✏️ Thêm giao dịch</button>
+
+      <form id="addForm" class="hidden-form" method="POST" action="{{ url_for('transaction.add_transaction') }}">
+        <input type="hidden" name="category" value="{{ category.name }}">
+        <input type="hidden" name="category_id" value="{{ category.category_id }}">
+        <input type="hidden" name="account_id" value="{{ default_account_id }}">
+        <input type="number" step="0.01" name="amount" placeholder="Số tiền" required>
+        <select name="transaction_type" required>
+          <option value="Chi tiêu">Chi tiêu</option>
+          <option value="Thu nhập">Thu nhập</option>
+        </select>
+        <input type="date" name="transaction_date" required>
+        <textarea name="note" placeholder="Ghi chú"></textarea>
+        <button type="submit">Lưu</button>
+        <button type="button" id="cancelForm">Hủy</button>
+      </form>
+    </section>
+
+    <section class="transaction-list">
+      <h3>Chi tiết giao dịch</h3>
+      {% if transactions %}
+        {% for transaction in transactions %}
+          <div class="transaction-item" data-transaction-id="{{ transaction.transaction_id }}">
+            <p><strong>💸 Số tiền:</strong> {{ "{:,.0f}".format(transaction.amount) }}₫</p>
+            <p><strong>🗕️ Ngày:</strong> {{ transaction.transaction_date.strftime('%d/%m/%Y - %H:%M') }}</p>
+            <p><strong>📝 Ghi chú:</strong> {{ transaction.note or 'Không có' }}</p>
+
+            <button class="edit-button">✏️ Sửa</button>
+            <button class="delete-button" data-transaction-id="{{ transaction.transaction_id }}">🗑️ Xóa</button>
+
+            <form class="edit-form" method="POST" action="{{ url_for('transaction.edit_transaction', transaction_id=transaction.transaction_id) }}" style="display: none;">
+              <input type="hidden" name="transaction_id" value="{{ transaction.transaction_id }}">
+              <input type="number" step="0.01" name="amount" value="{{ transaction.amount }}" required>
+              <select name="transaction_type" required>
+                <option value="Chi tiêu" {% if transaction.transaction_type == 'Chi tiêu' %}selected{% endif %}>Chi tiêu</option>
+                <option value="Thu nhập" {% if transaction.transaction_type == 'Thu nhập' %}selected{% endif %}>Thu nhập</option>
+              </select>
+              <input type="date" name="transaction_date" value="{{ transaction.transaction_date.strftime('%Y-%m-%d') }}" required>
+              <textarea name="note">{{ transaction.note }}</textarea>
+              <button type="submit">Lưu</button>
+              <button type="button" class="cancel-edit">Hủy</button>
+            </form>
+          </div>
+        {% endfor %}
+      {% else %}
+        <p style="text-align: center;">Chưa có giao dịch nào.</p>
+      {% endif %}
+    </section>
+  </main>
+  <script src="{{ url_for('static', filename='js/transaction.js') }}"></script>
+</body>
+</html>

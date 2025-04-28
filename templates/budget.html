@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ngân sách</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/budget.css') }}">
+  <script src="{{ url_for('static', filename='js/budget.js') }}" defer></script>
+</head>
+<body>
+  <div class="header">
+    <button class="back-button">←</button>
+    <script>
+      document.querySelector('.back-button').addEventListener('click', function () {
+        window.history.back();
+      });
+    </script>
+    
+    <h1>Ngân sách</h1>
+    <div class="refresh-icon" onclick="location.reload()">⟳</div>
+  </div>
+
+  <div class="content active" id="monthly">
+    <h2>Thể loại</h2>
+    <div id="budget-list">
+      {% for budget in budgets %}
+        <div class="item" data-id="{{ budget.budget_id }}">
+          <span class="icon">{{ budget.category.icon }}</span>
+          <span>{{ budget.category.name }}</span>
+          <span class="amount">{{ "{:,.0f}".format(budget.limit_amount) }}</span>
+          <button class="delete-button">❌</button>
+          <button class="update-button">✏️</button>
+          
+
+          <div class="budget-details" style="display: none; margin-top: 10px; font-size: 0.9em; color: #333;">
+            <div>Bắt đầu: {{ budget.start_date.strftime('%d/%m/%Y') }}</div>
+            <div>Kết thúc: {{ budget.end_date.strftime('%d/%m/%Y') }}</div>
+            <div>Giới hạn: {{ "{:,.0f}".format(budget.limit_amount) }} đ</div>
+          </div>
+        
+          <div class="update-form" style="display: none;">
+            <input type="number" class="update-amount" value="{{ budget.limit_amount }}">
+            <input type="date" class="update-start" value="{{ budget.start_date }}">
+            <input type="date" class="update-end" value="{{ budget.end_date }}">
+            <button class="confirm-update">Cập nhật</button>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    <h3>Thêm ngân sách</h3>
+    <div class="add-budget">
+      <select id="new-category">
+        {% for cat in categories %}
+          <option value="{{ cat.category_id }}">{{ cat.name }}</option>
+        {% endfor %}
+      </select>
+      <input type="number" id="new-amount" placeholder="Số tiền">
+      <input type="date" id="start-date" placeholder="Ngày bắt đầu">
+      <input type="date" id="end-date" placeholder="Ngày kết thúc">
+      <button id="add-button">Thêm</button>
+    </div>
+  </div>
+
+</body>
+</html>

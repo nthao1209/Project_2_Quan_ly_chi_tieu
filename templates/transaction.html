@@ -14,6 +14,15 @@
   </div>
 
   <main>
+    <div class="account-picker">
+      <label for="globalAccountSelect">Tài khoản:</label>
+      <select id="globalAccountSelect" onchange="filterByAccount()" required>
+        <option value="">-- Chọn tài khoản --</option>
+        {% for account in accounts %}
+          <option value="{{ account.id }}">{{ account.account_name }}</option>
+        {% endfor %}
+      </select>
+    </div>
     <section class="category-card">
       <div class="category-header">
         <div>
@@ -25,19 +34,45 @@
       <div class="category-stats">
         <div class="time-picker">
           <label for="monthSelect">Tháng:</label>
-          <select id="monthSelect"></select>
+          <select name="month" id="monthSelect">
+          <option value="">--</option>
+          {% for m in range(1, 13) %}
+             <option value="{{ m }}" {% if request.args.get('month') == m|string %}selected{% endif %}>{{ m }}</option>
+          {% endfor %}
+           </select>
+
           <label for="yearSelect">Năm:</label>
-          <select id="yearSelect"></select>
+          <select name="year" id="yearSelect">
+            <option value="">--</option>
+            {% for y in range(2023, 2031) %}
+              <option value="{{ y }}" {% if request.args.get('year') == y|string %}selected{% endif %}>{{ y }}</option>
+            {% endfor %}
+          </select>
         </div>
-        <p class="amount">₫</p>
+        <section class="budget-progress">
+          <h3>Ngân sách đã sử dụng</h3>
+          <div class="progress-bar-container">
+            <div class="progress-bar" id="budget-progress-bar"></div>
+          </div>
+          {% if budget %}
+              <p id="budget-percentage">
+                  Còn {{ "{:,.0f}".format(budget.limit_amount - total_expense) }}₫ ({{ percentage }}%)
+                </p>
+          {% else %}
+              <p id="budget-percentage">Chưa có ngân sách được thiết lập cho danh mục này.</p>
+          {% endif %}
+          </section>
+        
       </div>
-
-      <button id="toggleForm" class="add-btn">✏️ Thêm giao dịch</button>
-
+      
+      <div style="display: flex; gap: 10px;">
+        <button id="toggleForm" class="add-btn">✏️ Thêm giao dịch</button>
+        <button id="filterByMonthYearBtn" class="filter-btn">🔍 Lọc giao dịch</button>
+      </div>
       <form id="addForm" class="hidden-form" method="POST" action="{{ url_for('transaction.add_transaction') }}">
         <input type="hidden" name="category" value="{{ category.name }}">
         <input type="hidden" name="category_id" value="{{ category.category_id }}">
-        <input type="hidden" name="account_id" value="{{ default_account_id }}">
+        <input type="hidden" name="account_id" class="account-id-hidden">      
         <input type="number" step="0.01" name="amount" placeholder="Số tiền" required>
         <select name="transaction_type" required>
           <option value="Chi tiêu">Chi tiêu</option>
@@ -52,18 +87,26 @@
 
     <section class="transaction-list">
       <h3>Chi tiết giao dịch</h3>
+      
       {% if transactions %}
+        <!-- Tổng quan giao dịch -->
+        <section class="transaction-summary">
+          <p><strong>Tổng số giao dịch:</strong> {{ total_count }}</p>
+          <p><strong>Tổng số tiền:</strong> {{ "{:,.0f}".format(total_amount) }}₫</p>
+        </section>
+    
         {% for transaction in transactions %}
           <div class="transaction-item" data-transaction-id="{{ transaction.transaction_id }}">
             <p><strong>💸 Số tiền:</strong> {{ "{:,.0f}".format(transaction.amount) }}₫</p>
-            <p><strong>🗕️ Ngày:</strong> {{ transaction.transaction_date.strftime('%d/%m/%Y - %H:%M') }}</p>
+            <p><strong> Ngày:</strong> {{ transaction.transaction_date.strftime('%d/%m/%Y - %H:%M') }}</p>
             <p><strong>📝 Ghi chú:</strong> {{ transaction.note or 'Không có' }}</p>
-
             <button class="edit-button">✏️ Sửa</button>
             <button class="delete-button" data-transaction-id="{{ transaction.transaction_id }}">🗑️ Xóa</button>
-
+    
             <form class="edit-form" method="POST" action="{{ url_for('transaction.edit_transaction', transaction_id=transaction.transaction_id) }}" style="display: none;">
               <input type="hidden" name="transaction_id" value="{{ transaction.transaction_id }}">
+              <input type="hidden" name="category_id" value="{{ transaction.category_id }}">
+              <input type="hidden" name="account_id" class="account-id-hidden">
               <input type="number" step="0.01" name="amount" value="{{ transaction.amount }}" required>
               <select name="transaction_type" required>
                 <option value="Chi tiêu" {% if transaction.transaction_type == 'Chi tiêu' %}selected{% endif %}>Chi tiêu</option>
@@ -73,14 +116,52 @@
               <textarea name="note">{{ transaction.note }}</textarea>
               <button type="submit">Lưu</button>
               <button type="button" class="cancel-edit">Hủy</button>
-            </form>
+            </form>            
           </div>
         {% endfor %}
       {% else %}
         <p style="text-align: center;">Chưa có giao dịch nào.</p>
       {% endif %}
     </section>
-  </main>
+    
+  </main> 
+  
+  <script>
+    document.getElementById("filterByMonthYearBtn").addEventListener("click", function () {
+      const month = document.getElementById("monthSelect").value;
+      const year = document.getElementById("yearSelect").value;
+      const accountId = document.getElementById("globalAccountSelect").value;
+  
+      const params = new URLSearchParams(window.location.search);
+      const categoryId = params.get("category_id");
+  
+      if (month) {
+        params.set("month", month);
+      } else {
+        params.delete("month");
+      }
+  
+      if (year) {
+        params.set("year", year);
+      } else {
+        params.delete("year");
+      }
+  
+      if (accountId) {
+        params.set("account_id", accountId);
+      } else {
+        params.delete("account_id");
+      }
+  
+      if (categoryId) {
+        params.set("category_id", categoryId);
+      }
+  
+      // Điều hướng
+      window.location.search = params.toString();
+    });
+  </script>
+  
   <script src="{{ url_for('static', filename='js/transaction.js') }}"></script>
 </body>
 </html>

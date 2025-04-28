@@ -1,0 +1,274 @@
+/* Toàn bộ trang */
+body {
+  font-family: Arial, sans-serif;
+  background: #fff;
+  margin: 0;
+  padding: 0;
+  color: #444;
+}
+
+.header {
+  background: #f85ca5;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.back-button, .refresh-icon {
+  font-size: 20px;
+  background: none;
+  border: none;
+  color: white;
+}
+
+.tabs {
+  display: flex;
+  background: #f85ca5;
+  color: white;
+  padding: 5px;
+}
+
+.tab {
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.tab.active {
+  background: #fff;
+  color: #f85ca5;
+  border-radius: 15px;
+}
+
+.content {
+  display: none;
+  padding: 10px;
+}
+
+.content.active {
+  display: block;
+}
+
+h2 {
+  font-size: 14px;
+  color: #999;
+  margin: 12px 0 6px;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+  position: relative;
+}
+
+.item img {
+  width: 24px;
+  height: 24px;
+  margin-right: 10px;
+}
+
+.item span {
+  flex: 1;
+}
+
+.amount {
+  color: #f85ca5;
+}
+
+.unset {
+  color: #ccc;
+  font-style: italic;
+}
+
+.add-budget {
+  margin-top: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.add-budget input,
+.add-budget select,
+.add-budget button {
+  width: 100%; /* Đảm bảo tất cả các phần tử trong form có cùng chiều rộng */
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-sizing: border-box; /* Đảm bảo padding và border không làm thay đổi kích thước */
+}
+
+.add-budget button {
+  background: #f85ca5;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* Các icon */
+.icon {
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  transition: transform 0.2s ease;
+}
+
+.icon:hover {
+  transform: scale(1.1);
+}
+
+/* Thông tin chi tiết ngân sách */
+.budget-details {
+  display: none; /* Ẩn phần chi tiết ngân sách mặc định */
+  margin-top: 10px;
+  font-size: 0.9em;
+  color: #333;
+  background-color: #f1f1f1;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.budget-details div {
+  margin-bottom: 8px;
+}
+
+.budget-details .amount {
+  color: #f85ca5;
+}
+
+/* Style cho modal (form thêm ngân sách và cập nhật) */
+.form-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* Đảm bảo modal nằm ở giữa màn hình */
+  background-color: rgba(0, 0, 0, 0.5); /* Màu nền mờ */
+  z-index: 1000; /* Đảm bảo modal nằm trên các phần tử khác */
+  width: 300px;
+  border-radius: 8px;
+  display: none; /* Ban đầu ẩn form */
+  padding: 20px;
+}
+
+.form-modal-content {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.form-modal input,
+.form-modal select,
+.form-modal button {
+  width: 100%;
+  margin: 10px 0;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+.form-modal button {
+  background-color: #28a745;
+  color: white;
+  cursor: pointer;
+}
+
+.form-modal button#close-modal {
+  background-color: #dc3545;
+}
+
+.form-modal button:hover {
+  opacity: 0.8;
+}
+
+/* Ngăn không cho phần còn lại bị dịch chuyển */
+body.modal-open {
+  overflow: hidden; /* Ngừng cuộn trang khi modal mở */
+}
+
+.form-modal button#close-modal:hover {
+  background-color: #776e75; /* Nút đóng hover thành màu đỏ đậm */
+}
+
+/* Nút xóa và cập nhật ngân sách */
+.delete-button,
+.update-button {
+  background-color: #f1edef; /* Màu hồng đậm cho nút */
+  border: none;
+  color: white;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 50px;
+  margin-right: 10px;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+  position: relative;
+}
+
+.item img {
+  width: 24px;
+  height: 24px;
+  margin-right: 10px;
+}
+
+.item span {
+  flex: 1;
+}
+
+.amount {
+  color: #f85ca5;
+}
+
+.budget-details {
+  display: none; /* Ẩn phần chi tiết ngân sách mặc định */
+  margin-top: 10px;
+  font-size: 0.9em;
+  color: #333;
+  background-color: #f1f1f1;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.budget-details div {
+  margin-bottom: 8px;
+}
+
+.budget-details .amount {
+  color: #f85ca5;
+}
+
+/* Form thêm ngân sách */
+.add-budget input,
+.add-budget select {
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
+
+.add-budget button {
+  background: #f85ca5;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}

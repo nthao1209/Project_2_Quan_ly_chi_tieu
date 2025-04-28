@@ -49,8 +49,9 @@ def create_category():
         return jsonify({"Error": "Category already exists"}), 400
     
     new_category = Category(name=name, icon=icon, user_id=user_id, type=type)
+    type = data.get('type', '').strip().capitalize()
     if type not in ['Chi tiêu', 'Thu nhập']:
-        return jsonify({"Error": "Invalid category type"}), 400
+       return jsonify({"Error": "Invalid category type"}), 400
     db.session.add(new_category)
     db.session.commit()
     

@@ -6,6 +6,7 @@ class Account(db.Model):
     account_name = db.Column(db.String(100), nullable=False)
     balance = db.Column(db.Numeric(15, 2), default=0.00)
     currency = db.Column(db.String(10), default='VND')
+    is_default = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
 
     user = db.relationship('User', back_populates='accounts')

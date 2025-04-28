@@ -68,13 +68,12 @@ document.addEventListener("DOMContentLoaded", () => {
   async function deleteTransaction(transactionId) {
     const confirmDelete = confirm("Bạn có chắc chắn muốn xóa giao dịch này?");
     if (!confirmDelete) return;
-  
     try {
-      const response = await fetch(`/transaction/${transactionId}`, {
-        method: "DELETE",
+      const response = await fetch(`/transactions/delete/${transactionId}`, {
+        method: "POST",
       });
   
-      if (response.redirected) {
+      if (response.ok) {
         window.location.href = response.url;
       } else {
         alert("Không thể xóa giao dịch này!");

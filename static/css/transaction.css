@@ -107,4 +107,10 @@ body {
   .hidden-form button[type="button"] {
     background-color: #e0e0e0;
   }
+  .account-picker {
+    margin: 10px 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
   

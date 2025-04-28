@@ -1,7 +1,7 @@
-from flask import Flask , jsonify,session,has_request_context
+from flask import Flask , jsonify,session,has_request_context, send_from_directory
 from models.__init__ import *
 from models import db
-from routes import home, user_route, forgot_password, transaction_routes,category_routes,bank_account
+from routes import home, user_route, forgot_password, transaction_routes,category_routes,bank_account,savinggoal_routes,budget_routes
 from routes.extensions import mail
 from flask_mail import Mail
 from routes.user_route import redis_client
@@ -17,6 +17,8 @@ app.register_blueprint(forgot_password.forgot_password_bp)
 app.register_blueprint(category_routes.category_bp)  
 app.register_blueprint(transaction_routes.transaction_bp)
 app.register_blueprint(bank_account.bank_account_bp)
+app.register_blueprint(savinggoal_routes.saving_goal_bp)
+app.register_blueprint(budget_routes.budget_bp )
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 465
 app.config['MAIL_USE_SSL'] = True  # Đảm bảo bạn sử dụng SSL với cổng 465
@@ -42,7 +44,10 @@ with app.app_context():
     db.create_all()
     seed_default_categories()
 
+@app.route('/assets/images/<filename>')
+def serve_image(filename):
+    return send_from_directory('assets/images', filename)
 
 if __name__ == "__main__":
-    app.run(debug=1)
+    app.run(debug=True, port=5000)
     

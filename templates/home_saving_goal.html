@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mục tiêu tiết kiệm</title>
+    <body data-user-id="{{session['user_id'] }}">
+        <header>
+          <div class="top-bar">
+            <span class="back-btn" onclick="window.history.back();">←</span>
+            <h1>Mục tiêu tiết kiệm </h1>
+          </div>
+        </header>
+      
+    <style>
+        .top-bar {
+            background-color: #f684aa;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 10px;
+            font-size: 15px;
+        }
+        .add-button {
+            margin: 20px;
+            padding: 10px;
+            color: #990b60;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .goal-box {
+            background-color: #f8d5e0;
+            padding: 20px;
+            margin: 10px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+        }
+        .goal-box:hover {
+            background-color: #f1a7c3;
+        }
+        .goal-details {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <ul>
+        {% for goal in goals %}
+          <li>
+            <div class="goal-box" onclick="window.location.href='/detail_saving_goal'">
+              <strong>{{ goal.name }}</strong><br>
+              🎯 Số tiền mục tiêu: {{ "{:,.0f}".format(goal.target_amount) }} đ<br>
+              ⏳ Thời gian: {{ goal.start_time.strftime('%d/%m/%Y') }} → {{ goal.end_time.strftime('%d/%m/%Y') }}<br>
+              {% if goal.note %}📝 Ghi chú: {{ goal.note }}{% endif %}
+            </div>
+          </li>
+        {% else %}
+          <li>Không có mục tiêu nào.</li>
+        {% endfor %}
+    </ul>
+
+    <div id="add-button" class="add-button">+ Thêm vào</div>
+    <div id="link-container"></div>
+
+    <script>
+        document.getElementById("add-button").addEventListener("click", function () {
+            window.location.href = "/goals";
+        });
+    </script>
+</body>
+</html>

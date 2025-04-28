@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tạo mục tiêu</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/saving_goal.css') }}">
+</head>
+<body data-user-id="{{session['user_id'] }}">
+  <header>
+    <div class="top-bar">
+      <span class="back-btn" onclick="window.history.back();">←</span>
+      <h1>Tạo mục tiêu</h1>
+    </div>
+  </header>
+
+  <main>
+  
+    <form id="goal-form">
+      <section class="goal-form">
+        <div class="form-row">
+          <label>Tên mục tiêu</label>
+          <input type="text" id="name" name="name" placeholder="Tên mục tiêu" required>
+        </div>
+    
+        <div class="form-row">
+          <label>Biểu tượng</label>
+          <div class="icon-select">💖</div>
+        </div>
+    
+        <div class="form-row">
+          <label>Số tiền mục tiêu</label>
+          <input type="number" id="target_amount" name="target_amount" placeholder="Vui lòng nhập số tiền" required>
+        </div>
+    
+        <div class="form-row">
+          <label>Khởi đầu</label>
+          <input type="date" id="start_time" name="start_time"  required>
+        </div>
+    
+        <div class="form-row">
+          <label>Kết thúc</label>
+          <input type="date" id="end_time" name="end_time" required>
+        </div>
+    
+        <div class="form-row">
+          <label>Ghi chú</label>
+          <textarea id="note" name="note" maxlength="30" placeholder="Vui lòng điền ghi chú của mục tiêu"></textarea>
+        </div>
+      </section>
+    
+      <div class="form-actions">
+        <button type="submit" class="save-btn">Lưu mục tiêu</button>
+        <button type="button" class="cancel-btn" onclick="window.location.href='/goals';">Hủy</button>
+      </div>
+    </form>
+
+    <ul>
+      {% for goal in goals %}
+      <li>
+          <strong>{{ goal.name }}</strong>
+          <button onclick="updateGoal('{{ goal.goal_id }}')">Cập nhật</button>
+          <button onclick="deleteGoal('{{ goal.goal_id }}')">Xóa</button>
+      </li>
+      {% endfor %}
+    </ul>
+
+  </main>
+
+  <script src="{{ url_for('static', filename='js/saving_goal.js') }}"></script>
+</body>
+</html>

@@ -21,8 +21,14 @@
 </head>
 <body>
   <div class="header">
-    <div class="back-button">←</div>
-    <div class="title">Danh mục</div>
+    <div class="back-button" id = "back">←</div>
+    <script>
+      document.getElementById('back').addEventListener('click', function () {
+        window.history.back();
+      });
+    </script>
+
+    <div class="title"><h1> Danh mục </h1></div>
   </div>
 
   <div class="tab-container">
@@ -45,7 +51,9 @@
         </div>
         <div class="category-actions">
           <div class="menu-icon"><i class="fas fa-bars"></i></div>
-          <div class="delete-button" data-id="{{ category.category_id }}">Xóa</div>
+          <div class="delete-button" data-id="{{ category.category_id }}">
+            <i class="fas fa-times"></i>
+          </div>
       </div>
       </div>
     {% endfor %}
@@ -62,13 +70,30 @@
         </div>
         <div class="category-actions">
           <div class="menu-icon"><i class="fas fa-bars"></i></div>
-          <div class="delete-button" data-id="{{category.category_id }}">Xóa</div>
+          <div class="delete-button" data-id="{{category.category_id }}">
+            <i class="fas fa-times"></i>
+          </div>
       </div>
       </div>
     {% endfor %}
   </div>
 
   <div class="add-button">+ Thêm vào</div>
+
+  <div class="category-form" style="display: none;">
+    <div class="modal-content">
+      <span class="close-modal">&times;</span>
+      <h2>Thêm danh mục</h2>
+      <input type="text" placeholder="Tên danh mục" id="category-name">
+      <input type="text" placeholder="Icon" id="category-icon">
+      <select id="category-type" required>
+        <option value="Chi tiêu">Chi tiêu</option>
+        <option value="Thu nhập">Thu nhập</option>
+      </select>
+      <button id="submit-category">Thêm</button>
+      <button type="button" id="cancel-category">Hủy</button>
+    </div>
+  </div>
 
   <script>
     function showCategory(category) {

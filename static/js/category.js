@@ -9,6 +9,65 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 
+  // Hiện form khi bấm nút thêm
+  document.querySelector('.add-button').addEventListener('click', function () {
+    const modal = document.querySelector('.category-form');
+    modal.style.display = 'flex'; // Hiển thị modal
+    setTimeout(function () {
+      modal.style.opacity = 1; // Hiển thị dần
+      modal.style.transform = 'scale(1)'; // Modal nhảy vào vị trí bình thường
+    }, 10);
+  });
+// Gửi dữ liệu khi bấm nút Thêm
+document.querySelector('#submit-category').addEventListener('click', function () {
+  const name = document.querySelector('#category-name').value;
+  const icon = document.querySelector('#category-icon').value;
+  const type = document.querySelector('#category-type').value;
+
+  if (!name || !icon) {
+    alert('Vui lòng điền đủ thông tin!');
+    return;
+  }
+
+  const category = { name, icon, type };
+
+  fetch('/categories', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(category)
+  })
+    .then(res => res.json())
+    .then(data => {
+      if (data.category) {
+        appendCategoryToDOM(data.category);
+        document.querySelector('.category-form').style.display = 'none';
+        alert('Danh mục đã được thêm!');
+        location.reload();
+      } else {
+        alert('Thêm thất bại!');
+      }
+    });
+});
+
+// Đóng form khi bấm nút Hủy
+document.querySelector('#cancel-category').addEventListener('click', function () {
+  const modal = document.querySelector('.category-form');
+  modal.style.opacity = 0; // Ẩn dần
+  modal.style.transform = 'scale(0.8)'; // Thu nhỏ lại
+  setTimeout(function () {
+    modal.style.display = 'none'; // Ẩn modal khi hiệu ứng kết thúc
+  }, 300); // Thời gian trễ cho hiệu ứng ẩn
+});
+
+// Đóng form khi bấm nút đóng (x)
+document.querySelector('.close-modal').addEventListener('click', function () {
+  const modal = document.querySelector('.category-form');
+  modal.style.opacity = 0; // Ẩn dần
+  modal.style.transform = 'scale(0.8)'; // Thu nhỏ lại
+  setTimeout(function () {
+    modal.style.display = 'none'; // Ẩn modal khi hiệu ứng kết thúc
+  }, 300);
+});
 
   // Gắn sự kiện click cho tất cả menu-icon render sẵn
   document.querySelectorAll('.menu-icon').forEach(menuIcon => {

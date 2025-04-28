@@ -6,7 +6,9 @@ class SavingsGoal(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
     name = db.Column(db.String(100), nullable=False)
     target_amount = db.Column(db.Numeric(15, 2), nullable=False)
-    current_amount = db.Column(db.Numeric(15, 2), default=0.00)
-    deadline = db.Column(db.Date, nullable=False)
+    start_time = db.Column(db.Date, nullable=False)
+    end_time = db.Column(db.Date, nullable=False)
+    note = db.Column(db.Text) 
 
+    
     user = db.relationship('User', back_populates='savings_goals')

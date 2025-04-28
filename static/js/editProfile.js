@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
         };
 
         try {
-            const response = await fetch('/editprofile', {
+            const response = await fetch('/editProfile', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Chi tiết mục tiêu tiết kiệm</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/detail_saving_goal.css') }}">
+  <script src="{{ url_for('static', filename='js/detail_saving_goal.js') }}"></script>
+
+    <header>
+      <div class="top-bar">
+        <h2>Chi tiết mục tiêu tiết kiệm </h2>
+        <span class="back-btn" onclick="window.history.back();">←</span>
+        <button class="edit-btn" onclick="openEditForm('{{ goals[0].goal_id }}')">✎</button>
+      </div>
+    </header>
+  
+</head>
+<body>
+    
+    
+
+    <ul>
+        {% for goal in goals %}
+          <li>
+            <div class="goal-box" data-goal-id="{{goal.goal_id}}" >
+                <strong>{{ goal.name }}</strong><br>
+              🎯 Số tiền mục tiêu: {{ "{:,.0f}".format(goal.target_amount) }} đ<br>
+              ⏳ Thời gian: {{ goal.start_time.strftime('%d/%m/%Y') }} → {{ goal.end_time.strftime('%d/%m/%Y') }}<br>
+              {% if goal.note %}📝 Ghi chú: {{ goal.note }}{% endif %}
+            </div>
+          </li>
+        {% else %}
+          <li>Không có mục tiêu nào.</li>
+        {% endfor %}
+    </ul>
+
+  <!-- Form nạp tiền -->
+  <div id="deposit-form" class="modal hidden">
+    <div class="modal-content">
+      <h3>Nạp tiền</h3>
+      <input type="number" placeholder="Số tiền muốn nạp" />
+      <button onclick="hideDepositForm()">Xác nhận</button>
+    </div>
+  </div>
+
+  <!-- Modal chỉnh sửa -->
+<div id="edit-form" class="modal hidden">
+    <div class="modal-content">
+      <form id="edit-goal-form">
+        <h2>Chỉnh sửa mục tiêu</h2>
+        <div class="form-row">
+          <label>Tên mục tiêu</label>
+          <input type="text" id="edit-name" name="name" required>
+        </div>
+  
+        <div class="form-row">
+          <label>Biểu tượng</label>
+          <div class="icon-select">💖</div>
+        </div>
+  
+        <div class="form-row">
+          <label>Số tiền mục tiêu</label>
+          <input type="number" id="edit-target-amount" name="target_amount" required>
+        </div>
+  
+        <div class="form-row">
+          <label>Khởi đầu</label>
+          <input type="date" id="edit-start-time" name="start_time" required>
+        </div>
+  
+        <div class="form-row">
+          <label>Kết thúc</label>
+          <input type="date" id="edit-end-time" name="end_time" required>
+        </div>
+  
+        <div class="form-row">
+          <label>Ghi chú</label>
+          <textarea id="edit-note" name="note" maxlength="30"></textarea>
+        </div>
+  
+        <div class="form-actions">
+          <button type="submit" class="save-btn">Lưu</button>
+          <button type="button" class="cancel-btn" onclick="hideEditForm()">Hủy</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  
+</body>
+</html>

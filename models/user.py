@@ -13,6 +13,7 @@ class User(db.Model):
     __table_args__ = (
         db.CheckConstraint("gioi_tinh IN ('Nam', 'Nữ', 'Không cho biết')", name="gioi_tinh_check"),
     )
+    img = db.Column(db.String(255), nullable=False)
         
 
     accounts = db.relationship('Account', back_populates='user', cascade='all, delete')

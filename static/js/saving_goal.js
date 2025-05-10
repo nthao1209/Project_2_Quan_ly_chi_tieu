@@ -1,7 +1,4 @@
 document.addEventListener("DOMContentLoaded", function () {
-    let mode = "create";
-    let currentGoalId = null;
-
     const form = document.getElementById("goal-form");
 
     form.addEventListener("submit", function (e) {
@@ -20,14 +17,8 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        const url = mode === "edit"
-            ? `/goals/update/${currentGoalId}`
-            : "/goals/add";
-
-        const method = mode === "edit" ? "PUT" : "POST";
-
-        fetch(url, {
-            method: method,
+        fetch("/goals/add", {
+            method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(data)
         })
@@ -36,47 +27,13 @@ document.addEventListener("DOMContentLoaded", function () {
             if (res.error) {
                 alert("Lỗi: " + res.error);
             } else {
-                alert(mode === "edit" ? "Cập nhật thành công" : "Đã thêm mục tiêu");
-                window.location.href = "/goals";
+                alert("Đã thêm mục tiêu thành công!");
+                window.location.href = "/home_saving_goal?_=" + new Date().getTime();
             }
         })
-        .catch(err => console.error("Lỗi:", err));
+        .catch(err => {
+            console.error("Lỗi:", err);
+            alert("Có lỗi xảy ra. Vui lòng thử lại.");
+        });
     });
-
-    window.updateGoal = function (goalId) {
-        fetch(`/goals/detail/${goalId}`)
-            .then(res => res.json())
-            .then(goal => {
-                document.getElementById("name").value = goal.name;
-                document.getElementById("target_amount").value = goal.target_amount;
-                document.getElementById("start_time").value = goal.start_time;
-                document.getElementById("end_time").value = goal.end_time;
-                document.getElementById("note").value = goal.note;
-
-                mode = "edit";
-                currentGoalId = goalId;
-
-                document.querySelector("header h1").innerText = "Cập nhật mục tiêu";
-                document.querySelector(".save-btn").innerText = "Cập nhật";
-            })
-            .catch(err => console.error("Không thể load mục tiêu", err));
-    };
-
-    window.deleteGoal = function (goalId) {
-        if (!confirm("Bạn chắc chắn muốn xóa mục tiêu này?")) return;
-
-        fetch(`/goals/delete/${goalId}`, {
-            method: "DELETE"
-        })
-        .then(res => res.json())
-        .then(res => {
-            if (res.error) {
-                alert("Lỗi: " + res.error);
-            } else {
-                alert("Đã xóa mục tiêu");
-                window.location.href = "/goals";
-            }
-        })
-        .catch(err => console.error("Lỗi xóa mục tiêu:", err));
-    };
 });

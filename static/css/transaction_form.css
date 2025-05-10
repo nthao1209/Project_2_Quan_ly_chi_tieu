@@ -1,0 +1,384 @@
+/* ===== TỔNG THỂ ===== */
+:root {
+  --primary-color: #d23669;
+  --primary-light: #ff8fab;
+  --primary-lighter: #ffc2d1;
+  --primary-lightest: #ffe0ec;
+  --bg-color: #fff0f5;
+  --card-bg: #fff;
+  --text-dark: #333;
+  --text-light: #fff;
+}
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background-color: var(--primary-lightest);
+  color: var(--text-dark);
+  line-height: 1.6;
+}
+
+/* ===== LAYOUT CHÍNH ===== */
+.main-container {
+  display: flex;
+  min-height: 100vh;
+  padding: 20px;
+  gap: 25px;
+}
+
+.left-section {
+  flex: 2;
+  background: var(--card-bg);
+  border-radius: 18px;
+  padding: 25px;
+  box-shadow: 0 4px 20px rgba(210, 54, 105, 0.08);
+}
+
+.right-section {
+  flex: 1;
+  background: var(--card-bg);
+  border-radius: 18px;
+  padding: 25px;
+  box-shadow: 0 4px 20px rgba(210, 54, 105, 0.08);
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===== HEADER ===== */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 15px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--primary-lighter);
+}
+
+.back-button, 
+.setting-button {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: var(--primary-color);
+  cursor: pointer;
+  transition: transform 0.2s;
+  padding: 8px;
+}
+
+.back-button:hover,
+.setting-button:hover {
+  transform: scale(1.1);
+  color: var(--primary-light);
+}
+
+/* ===== FORM ELEMENTS ===== */
+.input-group {
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--primary-color);
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="datetime-local"],
+select {
+  width: 100%;
+  padding: 14px 18px;
+  border: 2px solid var(--primary-lighter);
+  border-radius: 12px;
+  font-size: 1rem;
+  transition: all 0.3s;
+  background-color: var(--card-bg);
+}
+
+input:focus,
+select:focus {
+  border-color: var(--primary-light);
+  box-shadow: 0 0 0 3px rgba(210, 54, 105, 0.15);
+  outline: none;
+}
+
+/* ===== NOTE & AMOUNT ===== */
+.note-bar {
+  display: flex;
+  align-items: center;
+  background: var(--card-bg);
+  border-radius: 12px;
+  padding: 12px 16px;
+  border: 2px solid var(--primary-lighter);
+  margin-bottom: 20px;
+}
+
+.account-icon {
+  font-size: 1.8rem;
+  color: var(--primary-color);
+  margin-right: 12px;
+}
+
+.note-bar input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-size: 1rem;
+  padding: 8px 0;
+}
+
+.amount-display {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--primary-color);
+  text-align: right;
+  background: transparent;
+  border: none;
+  width: 100%;
+}
+
+/* ===== CATEGORY GRID ===== */
+.category-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 15px;
+  margin: 20px 0;
+}
+
+.category-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px 10px;
+  border-radius: 12px;
+  background: var(--primary-lighter);
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.category-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 8px rgba(210, 54, 105, 0.2);
+}
+
+.category-item.selected {
+  background: var(--primary-color);
+  color: var(--text-light);
+  box-shadow: 0 4px 12px rgba(210, 54, 105, 0.3);
+}
+
+.category-icon {
+  font-size: 2rem;
+  margin-bottom: 8px;
+}
+
+.category-name {
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-align: center;
+}
+
+/* ===== ACCOUNT GRID ===== */
+.account-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 15px;
+  margin: 20px 0;
+}
+
+.account-grid button {
+  padding: 16px;
+  border-radius: 12px;
+  background: var(--primary-lightest);
+  border: 2px solid var(--primary-lighter);
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.account-grid button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 8px rgba(210, 54, 105, 0.1);
+}
+
+.account-grid button.selected {
+  background: var(--primary-color);
+  color: var(--text-light);
+  border-color: var(--primary-color);
+  box-shadow: 0 4px 12px rgba(210, 54, 105, 0.2);
+}
+
+/* ===== DATE BAR ===== */
+.date-bar {
+  display: flex;
+  align-items: center;
+  margin: 20px 0;
+}
+
+.date-bar label {
+  margin-bottom: 0;
+  margin-right: 12px;
+  min-width: 100px;
+}
+
+.now-button {
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  margin-left: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.now-button:hover {
+  background: var(--primary-light);
+  transform: translateY(-1px);
+}
+
+/* ===== SUBMIT BUTTON ===== */
+.submit-button {
+  margin-top: auto;
+}
+
+.submit-button button {
+  width: 100%;
+  padding: 16px;
+  border-radius: 12px;
+  border: none;
+  background: var(--primary-color);
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.submit-button button:hover {
+  background: var(--primary-light);
+  box-shadow: 0 4px 12px rgba(210, 54, 105, 0.3);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .main-container {
+    flex-direction: column;
+    padding: 15px;
+  }
+  
+  .category-grid {
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  }
+  
+  .account-grid {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  }
+}
+
+
+.back-button,
+.setting-button {
+  background: none;  /* Không có nền */
+  border: none;      /* Không có viền */
+  font-size: 24px;   /* Cỡ chữ */
+  cursor: pointer;   /* Hiển thị con trỏ pointer khi hover */
+  outline: none;     /* Ẩn viền khi focus */
+  color:#d23669
+}
+/* ===== NÚT "BÂY GIỜ" ===== */
+.now-button {
+  /* Layout */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  margin-left: 12px;
+  min-width: 90px;
+  
+  /* Style */
+  background-color: #d23669; /* Màu chính */
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: 'Roboto', sans-serif;
+  cursor: pointer;
+  user-select: none;
+  letter-spacing: 0.5px;
+  
+  /* Effects */
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 5px rgba(210, 54, 105, 0.3);
+  
+  /* Icon đồng hồ */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'%3E%3C/circle%3E%3Cpolyline points='12 6 12 12 16 14'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: 12px center;
+  padding-left: 36px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Hiệu ứng hover */
+.now-button:hover {
+  background-color: #b82a5a; /* Màu hover tối hơn 10% */
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(210, 54, 105, 0.4);
+}
+
+/* Hiệu ứng click */
+.now-button:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 3px rgba(210, 54, 105, 0.3);
+}
+
+/* Glow effect */
+.now-button::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at center, rgba(255,255,255,0.3) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.now-button:hover::after {
+  opacity: 1;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .now-button {
+    padding: 6px 12px;
+    font-size: 13px;
+    margin-left: 8px;
+    min-width: 80px;
+    background-position: 8px center;
+    padding-left: 32px;
+  }
+}
+
+/* Animation */
+@keyframes nowButtonClick {
+  0% { transform: scale(1); }
+  50% { transform: scale(0.96); }
+  100% { transform: scale(1); }
+}
+
+.now-button.clicked {
+  animation: nowButtonClick 0.3s ease;
+}

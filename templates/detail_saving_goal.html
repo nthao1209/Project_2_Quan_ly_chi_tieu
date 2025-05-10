@@ -4,88 +4,100 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Chi tiết mục tiêu tiết kiệm</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/detail_saving_goal.css') }}">
-  <script src="{{ url_for('static', filename='js/detail_saving_goal.js') }}"></script>
-
-    <header>
-      <div class="top-bar">
-        <h2>Chi tiết mục tiêu tiết kiệm </h2>
-        <span class="back-btn" onclick="window.history.back();">←</span>
-        <button class="edit-btn" onclick="openEditForm('{{ goals[0].goal_id }}')">✎</button>
-      </div>
-    </header>
-  
 </head>
 <body>
-    
-    
+  <header>
+    <div class="header">
+      <span class="back-btn" onclick="window.location.href = '/home_saving_goal';">←</span>
+      <h2>Chi tiết mục tiêu tiết kiệm</h2>
+      {% if goals %}
+      <button class="edit-btn" onclick="openEditForm('{{ goals[0].goal_id }}')">✎</button>
+      {% endif %}
+      </div>
+  </header>
 
-    <ul>
-        {% for goal in goals %}
-          <li>
-            <div class="goal-box" data-goal-id="{{goal.goal_id}}" >
-                <strong>{{ goal.name }}</strong><br>
-              🎯 Số tiền mục tiêu: {{ "{:,.0f}".format(goal.target_amount) }} đ<br>
-              ⏳ Thời gian: {{ goal.start_time.strftime('%d/%m/%Y') }} → {{ goal.end_time.strftime('%d/%m/%Y') }}<br>
-              {% if goal.note %}📝 Ghi chú: {{ goal.note }}{% endif %}
-            </div>
-          </li>
-        {% else %}
-          <li>Không có mục tiêu nào.</li>
-        {% endfor %}
-    </ul>
+  <ul>
+    {% for item in goals_with_progress %}
+      <li>
+        <div class="goal-box" data-goal-id="{{ item.goal.goal_id }}">
+          <strong>{{ item.goal.name }}</strong><br>
+          🎯 Số tiền mục tiêu: {{ "{:,.0f}".format(item.goal.target_amount) }} đ<br>
+          ⏳ Thời gian: {{ item.goal.start_time.strftime('%d/%m/%Y') }} → {{ item.goal.end_time.strftime('%d/%m/%Y') }}<br>
+          {% if item.goal.note %}📝 Ghi chú: {{ item.goal.note }}{% endif %}
+          <p>Đã nạp: {{ "{:,.0f}".format(item.total_deposited) }} / {{ "{:,.0f}".format(item.goal.target_amount) }} đ</p>
+          <p>Tiến độ: {{ item.completion_percentage|round(2) }}%</p>
+          
+          <div class="goal-actions">
+            <button class="deposit-btn" onclick="window.location.href='/deposit?goal_id={{ item.goal.goal_id }}'">Nạp tiền</button>
+            <button class="update-btn" onclick="openEditForm('{{ item.goal.goal_id }}')">Chỉnh sửa</button>
+          </div>
+          <hr>
+        </div>
+      </li>
+    {% else %}
+      <li>Không có mục tiêu nào.</li>
+    {% endfor %}
+  </ul>
 
-  <!-- Form nạp tiền -->
-  <div id="deposit-form" class="modal hidden">
-    <div class="modal-content">
-      <h3>Nạp tiền</h3>
-      <input type="number" placeholder="Số tiền muốn nạp" />
-      <button onclick="hideDepositForm()">Xác nhận</button>
-    </div>
-  </div>
-
-  <!-- Modal chỉnh sửa -->
-<div id="edit-form" class="modal hidden">
+  <!-- Edit Modal -->
+  <div id="edit-form" class="modal hidden">
     <div class="modal-content">
       <form id="edit-goal-form">
-        <h2>Chỉnh sửa mục tiêu</h2>
+        <h2 id="form-title">Chỉnh sửa mục tiêu</h2>
+        
         <div class="form-row">
-          <label>Tên mục tiêu</label>
-          <input type="text" id="edit-name" name="name" required>
+          <div class="input-container">
+            <i class="fas fa-mountain"></i>
+            <label for="edit-name">Tên mục tiêu</label>
+          </div>
+          <input type="text" id="edit-name" name="name" placeholder="Tên mục tiêu" required maxlength="50">
         </div>
-  
+
         <div class="form-row">
-          <label>Biểu tượng</label>
-          <div class="icon-select">💖</div>
+          <div class="input-container">
+            <i class="fas fa-dollar-sign money-icon"></i>
+            <label for="edit-target-amount">Số tiền mục tiêu (đ)</label>
+          </div>
+          <input type="number" id="edit-target-amount" name="target_amount" 
+                 placeholder="Vui lòng nhập số tiền" required min="1000" step="1000">
         </div>
-  
+
         <div class="form-row">
-          <label>Số tiền mục tiêu</label>
-          <input type="number" id="edit-target-amount" name="target_amount" required>
-        </div>
-  
-        <div class="form-row">
-          <label>Khởi đầu</label>
+          <div class="input-container">
+            <i class="fas fa-calendar-alt calendar-icon"></i>
+            <label for="edit-start-time">Khởi đầu</label>
+          </div>
           <input type="date" id="edit-start-time" name="start_time" required>
         </div>
-  
+
         <div class="form-row">
-          <label>Kết thúc</label>
+          <div class="input-container">
+            <i class="fas fa-calendar-alt calendar-icon"></i>
+            <label for="edit-end-time">Kết thúc</label>
+          </div>
           <input type="date" id="edit-end-time" name="end_time" required>
         </div>
-  
+
         <div class="form-row">
-          <label>Ghi chú</label>
-          <textarea id="edit-note" name="note" maxlength="30"></textarea>
+          <div class="input-container">
+            <i class="fas fa-book"></i>
+            <label for="edit-note">Ghi chú</label>
+          </div>
+          <textarea id="edit-note" name="note" maxlength="200" 
+                    placeholder="Vui lòng điền ghi chú của mục tiêu (tối đa 200 ký tự)"></textarea>
         </div>
-  
+
         <div class="form-actions">
           <button type="submit" class="save-btn">Lưu</button>
           <button type="button" class="cancel-btn" onclick="hideEditForm()">Hủy</button>
+          <button type="button" class="delete-btn" onclick="confirmDelete()">Xóa</button>
         </div>
       </form>
     </div>
   </div>
-  
+
+  <script src="{{ url_for('static', filename='js/detail_saving_goal.js') }}"></script>
 </body>
 </html>

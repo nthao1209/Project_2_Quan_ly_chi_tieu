@@ -3,16 +3,15 @@ from models import db, Category
 
 category_bp= Blueprint('category', __name__)
 
-@category_bp.route('/categories')
+
+
 @category_bp.route('/categories', methods=['GET'])
 def get_categories():
     user_id=session.get('user_id')
     if user_id is None:
         return jsonify({"Error": "User not logged in"}), 401
-
-    if user_id is None:
-        return jsonify({"Error": "User_id is required"}), 400
     
+
 
     categories = Category.query.filter(
         (Category.user_id == user_id) | (Category.user_id.is_(None))
@@ -70,6 +69,8 @@ def categories_page():
     user_id = session.get('user_id')
     if not user_id:
         return jsonify({'error': 'Not logged in'}), 401
+    
+
 
     expenses = Category.query.filter(
         ((Category.user_id == user_id) | (Category.user_id.is_(None))) &

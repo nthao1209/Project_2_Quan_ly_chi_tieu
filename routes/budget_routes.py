@@ -26,6 +26,9 @@ def create_or_update_budget(data, budget=None):
     start_date = datetime.strptime(data.get('start_date'), '%Y-%m-%d').date()
     end_date = datetime.strptime(data.get('end_date'), '%Y-%m-%d').date()
 
+    if start_date > end_date:
+        raise ValueError("Ngày bắt đầu phải nhỏ hơn hoặc bằng ngày kết thúc.")
+
     if budget:
         budget.limit_amount = limit_amount
         budget.start_date = start_date

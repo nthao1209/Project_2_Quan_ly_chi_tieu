@@ -5,10 +5,12 @@ from flask_mail import Mail as mail
 from flask_mail import Message
 import redis
 import random
-from . import db, User
+from . import db
+from models import User, Category
 from twilio.rest import Client
 from pathlib import Path
 import uuid
+import traceback
 
 
 # Khởi tạo Blueprint
@@ -70,19 +72,35 @@ def handle_user_update(data, user=None):
     return user
 
 
+def copy_default_categories_to_user(user_id):
+    # Lấy tất cả danh mục mặc định (user_id=None)
+    default_categories = Category.query.filter_by(user_id=None).all()
+    
+    for default_cat in default_categories:
+        # Kiểm tra xem người dùng đã có danh mục này chưa
+        if not Category.query.filter_by(name=default_cat.name, user_id=user_id).first():
+            new_category = Category(
+                name=default_cat.name,
+                icon=default_cat.icon,
+                type=default_cat.type,
+                user_id=user_id  # Gán user_id cụ thể
+            )
+            db.session.add(new_category)
+    
+    db.session.commit()
+
 # Đăng ký
 @user_bp.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
         data = request.form
-
-        if not data:
-            return jsonify({"message": "Dữ liệu không hợp lệ"}), 400
+        email = data.get("email")
 
         # Kiểm tra xem email đã tồn tại chưa
         if User.query.filter_by(email=data.get("email")).first():
             return jsonify({"message": "Email đã tồn tại"}), 400
-
+        
+        
         # Gọi hàm chung để tạo người dùng mới
         user = handle_user_update(data)
 
@@ -112,6 +130,10 @@ def login():
             return jsonify({"message": "Sai email hoặc mật khẩu"}), 401
 
         session["user_id"] = user.user_id
+        
+        if not Category.query.filter_by(user_id=user.user_id).first():
+                copy_default_categories_to_user(user.user_id)
+        
         return jsonify({"message": "Đăng nhập thành công"}), 200
     return render_template("login.html")
 
@@ -150,5 +172,12 @@ def viewProfile():
         return redirect(url_for("user.login"))
 
     return render_template("viewProfile.html", user=user)
+
+@user_bp.route("/logout", methods=["GET"])
+def logout():
+    if "user_id" in session:
+        session.pop("user_id")  # Xoá user_id khỏi session
+        return redirect(url_for("user.login"))  # Điều hướng về trang đăng nhập
+    return redirect(url_for("user.login"))  # Nếu không có user_id trong session, chuyển hướng về đăng nhập
 
 

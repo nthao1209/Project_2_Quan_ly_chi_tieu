@@ -1,68 +1,155 @@
-// Function to open the edit form and populate it with data
-function openEditForm(goalId) {
-    fetch(`/goals/detail/${goalId}`)
-      .then(response => response.json())
-      .then(goal => {
-        // Populate the form fields with goal data
-        document.getElementById('edit-name').value = goal.name;
-        document.getElementById('edit-target-amount').value = goal.target_amount;
-        document.getElementById('edit-start-time').value = goal.start_time.split('T')[0];  // Assuming the time is in ISO format
-        document.getElementById('edit-end-time').value = goal.end_time.split('T')[0];  // Assuming the time is in ISO format
-        document.getElementById('edit-note').value = goal.note || '';
-  
-        // Save goalId in form to send PUT later
-        document.getElementById('edit-goal-form').setAttribute('data-goal-id', goal.goal_id);
-  
-        // Show the edit form
-        document.getElementById('edit-form').classList.remove('hidden');
+document.addEventListener("DOMContentLoaded", function () {
+  let currentGoalId = null;
+  const editForm = document.getElementById('edit-goal-form');
+  const modal = document.getElementById('edit-form');
+  const formTitle = document.getElementById('form-title');
+
+  // Function to open edit form
+  window.openEditForm = function(goalId) {
+      
+    if (!goalId) {
+      console.error('No goal ID provided');
+      return;
+    }
+
+      currentGoalId = goalId;
+      fetch(`/goals/detail/${goalId}`)
+          .then(response => {
+              if (!response.ok) throw new Error('Không thể tải dữ liệu mục tiêu');
+              return response.json();
+          })
+          .then(goal => {
+              // Populate form fields
+              document.getElementById('edit-name').value = goal.name;
+              document.getElementById('edit-target-amount').value = goal.target_amount;
+              document.getElementById('edit-start-time').value = goal.start_time;
+              document.getElementById('edit-end-time').value = goal.end_time;
+              document.getElementById('edit-note').value = goal.note || '';
+              
+              // Update form title
+              formTitle.textContent = 'Chỉnh sửa mục tiêu';
+              document.querySelector('.save-btn').textContent = 'Cập nhật';
+              
+              // Show modal
+              modal.classList.remove('hidden');
+          })
+          .catch(error => {
+              console.error('Error:', error);
+              showAlert('error', 'Lỗi khi tải dữ liệu: ' + error.message);
+          });
+  };
+
+  // Function to hide edit form
+  window.hideEditForm = function() {
+      modal.classList.add('hidden');
+      editForm.reset();
+      currentGoalId = null;
+  };
+
+  // Form submission handler
+  editForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const formData = {
+          name: document.getElementById('edit-name').value.trim(),
+          target_amount: parseFloat(document.getElementById('edit-target-amount').value),
+          start_time: document.getElementById('edit-start-time').value,
+          end_time: document.getElementById('edit-end-time').value,
+          note: document.getElementById('edit-note').value.trim()
+      };
+
+      // Validation
+      if (!formData.name || isNaN(formData.target_amount) || !formData.start_time || !formData.end_time) {
+          showAlert('error', 'Vui lòng điền đầy đủ thông tin bắt buộc');
+          return;
+      }
+
+      if (formData.target_amount <= 0) {
+          showAlert('error', 'Số tiền mục tiêu phải lớn hơn 0');
+          return;
+      }
+
+      const startDate = new Date(formData.start_time);
+      const endDate = new Date(formData.end_time);
+      if (endDate <= startDate) {
+          showAlert('error', 'Thời gian kết thúc phải sau thời gian bắt đầu');
+          return;
+      }
+
+      const url = currentGoalId ? `/goals/update/${currentGoalId}` : '/goals/add';
+      const method = currentGoalId ? 'PUT' : 'POST';
+
+      // Show loading state
+      const submitBtn = document.querySelector('.save-btn');
+      const originalBtnText = submitBtn.textContent;
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Đang xử lý...';
+
+      fetch(url, {
+          method: method,
+          headers: {
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData)
+      })
+      .then(response => {
+          if (!response.ok) throw new Error('Lỗi kết nối với máy chủ');
+          return response.json();
+      })
+      .then(data => {
+          if (data.error) throw new Error(data.error);
+          showAlert('success', currentGoalId ? 'Cập nhật mục tiêu thành công!' : 'Thêm mục tiêu mới thành công!');
+          setTimeout(() => window.location.reload(), 1500);
       })
       .catch(error => {
-        alert('Lỗi khi tải dữ liệu mục tiêu: ' + error);
+          console.error('Error:', error);
+          showAlert('error', 'Lỗi: ' + error.message);
+      })
+      .finally(() => {
+          submitBtn.disabled = false;
+          submitBtn.textContent = originalBtnText;
+      });
+  });
+
+  // Delete confirmation
+  window.confirmDelete = function() {
+      if (!currentGoalId) return;
+      
+      if (confirm('Bạn có chắc chắn muốn xóa mục tiêu này? Toàn bộ lịch sử nạp tiền cũng sẽ bị xóa.')) {
+          deleteGoal(currentGoalId);
+      }
+  };
+
+  // Delete goal function
+  function deleteGoal(goalId) {
+      fetch(`/goals/delete/${goalId}`, {
+          method: 'DELETE'
+      })
+      .then(response => {
+          if (!response.ok) throw new Error('Lỗi kết nối với máy chủ');
+          return response.json();
+      })
+      .then(data => {
+          if (data.error) throw new Error(data.error);
+          showAlert('success', 'Đã xóa mục tiêu thành công!');
+          window.location.reload();
+        })
+      .catch(error => {
+          console.error('Error:', error);
+          showAlert('error', 'Lỗi khi xóa mục tiêu: ' + error.message);
       });
   }
-  
-  // Function to hide the edit form
-  function hideEditForm() {
-    document.getElementById('edit-form').classList.add('hidden');
-  }
-  
-  // Form submit handler to update the goal
-  document.getElementById('edit-goal-form').addEventListener('submit', function (e) {
-    e.preventDefault();
-    console.log('Form đã được gửi!')
-    const goalId = this.getAttribute('data-goal-id');
-    const data = {
-      name: document.getElementById('edit-name').value,
-      target_amount: document.getElementById('edit-target-amount').value,
-      start_time: document.getElementById('edit-start-time').value,
-      end_time: document.getElementById('edit-end-time').value,
-      note: document.getElementById('edit-note').value
-    };
-    
 
-    if (!data.name || !data.target_amount || !data.start_time || !data.end_time) {
-        alert('Vui lòng điền đầy đủ thông tin.');
-        return;
-      }
-    
-    fetch(`/goals/update/${goalId}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data)
-    })
-    .then(res => res.json())
-    .then(res => {
-      if (res.message) {
-        alert('Cập nhật thành công!');
-        location.reload(); 
-      } else {
-        alert('Lỗi: ' + res.error);
-      }
-    })
-    .catch(error => {
-      alert('Lỗi khi cập nhật: ' + error);
-    });
-  });
-  
+  // Helper function to show alerts
+  function showAlert(type, message) {
+      const alertDiv = document.createElement('div');
+      alertDiv.className = `alert ${type}`;
+      alertDiv.textContent = message;
+      document.body.appendChild(alertDiv);
+      
+      setTimeout(() => {
+          alertDiv.classList.add('fade-out');
+          setTimeout(() => alertDiv.remove(), 500);
+      }, 3000);
+  }
+});

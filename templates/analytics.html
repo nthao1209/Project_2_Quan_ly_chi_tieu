@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Analytics</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/analytics.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <div class="analytics-header">
+        <div class="header-top">
+        <div class="back-button" id = "back">←</div>
+            <script>
+            document.getElementById('back').addEventListener('click', function () {
+                window.location.href = '/home'; 
+            });
+            </script>
+
+        <h1>Phân tích</h1>
+    
+        <div class="date-picker">
+            <span class="month-nav" id="prevMonth"><</span>
+            <span id="currentMonthYear"></span>
+            <span class="month-nav" id="nextMonth">></span>
+        </div>
+     </div>
+
+     <div class="chart-tabs">
+        <button onclick="switchChart('expense')" class="chart-tab active" id="tab-expense">
+          <i class="fas fa-shopping-cart"></i> Chi tiêu
+        </button>
+        <button onclick="switchChart('income')" class="chart-tab" id="tab-income">
+          <i class="fas fa-hand-holding-usd"></i> Thu nhập
+        </button>
+        <button onclick="switchChart('budget')" class="chart-tab" id="tab-budget">
+          <i class="fas fa-piggy-bank"></i> Ngân sách
+        </button>
+      </div>
+      
+    </div>          
+
+    <canvas id="expenseChart" width="300" height="300"></canvas>
+
+    <div id="detailsContainer" class="details-container"></div>
+
+
+    <script src="{{ url_for('static', filename='js/analytics.js') }}"></script>
+
+  
+</body>
+</html>

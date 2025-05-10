@@ -7,27 +7,38 @@
     <body data-user-id="{{session['user_id'] }}">
         <header>
           <div class="top-bar">
-            <span class="back-btn" onclick="window.history.back();">←</span>
-            <h1>Mục tiêu tiết kiệm </h1>
+            <span class="back-btn" onclick="window.location.href = '/home';">←</span>
+            <h1 class="title">Mục tiêu tiết kiệm</h2>
           </div>
         </header>
       
     <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
         .top-bar {
             background-color: #f684aa;
             color: white;
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            justify-content: center; /* căn giữa */
+            position: relative; /* cho phép nút back tuyệt đối */
             padding: 10px 10px;
             font-size: 15px;
         }
-        .add-button {
-            margin: 20px;
-            padding: 10px;
-            color: #990b60;
-            font-size: 16px;
+        .back-btn {
+            position: absolute;
+            left: 10px;
+            font-size: 30px;
             cursor: pointer;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .title {
+            margin: 0;
+            font-size: 30px;
+            font-weight: bold;
         }
         .goal-box {
             background-color: #f8d5e0;
@@ -42,6 +53,25 @@
         }
         .goal-details {
             margin: 5px 0;
+        }
+        /* chỉnh nút thêm vào */
+        .add-button {
+            display: block;
+            width: fit-content;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background-color: #f684aa;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            font-size: 16px;
+            cursor: pointer;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s;
+        }
+        .add-button:hover {
+            background-color: #f16291;
         }
     </style>
 </head>
@@ -62,7 +92,7 @@
         {% endfor %}
     </ul>
 
-    <div id="add-button" class="add-button">+ Thêm vào</div>
+    <button id="add-button" class="add-button">+ Thêm vào</button>
     <div id="link-container"></div>
 
     <script>

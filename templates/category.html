@@ -24,7 +24,7 @@
     <div class="back-button" id = "back">←</div>
     <script>
       document.getElementById('back').addEventListener('click', function () {
-        window.history.back();
+        window.location.href = '/home'; 
       });
     </script>
 
@@ -111,10 +111,5 @@
     }
   </script>
 
-  <script>
-    document.querySelector('.back-button').addEventListener('click', function() {
-      window.history.back(); // Quay lại trang trước
-    });
-  </script>
 </body>
 </html>

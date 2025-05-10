@@ -1,7 +1,7 @@
 from flask import Flask , jsonify,session,has_request_context, send_from_directory
 from models.__init__ import *
 from models import db
-from routes import home, user_route, forgot_password, transaction_routes,category_routes,bank_account,savinggoal_routes,budget_routes
+from routes import home, user_route, forgot_password, transaction_routes,category_routes,bank_account,savinggoal_routes,budget_routes,deposit_transaction_routes,analytics
 from routes.extensions import mail
 from flask_mail import Mail
 from routes.user_route import redis_client
@@ -19,6 +19,8 @@ app.register_blueprint(transaction_routes.transaction_bp)
 app.register_blueprint(bank_account.bank_account_bp)
 app.register_blueprint(savinggoal_routes.saving_goal_bp)
 app.register_blueprint(budget_routes.budget_bp )
+app.register_blueprint(deposit_transaction_routes.deposit_bp)
+app.register_blueprint(analytics.analytics_bp)
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 465
 app.config['MAIL_USE_SSL'] = True  # Đảm bảo bạn sử dụng SSL với cổng 465

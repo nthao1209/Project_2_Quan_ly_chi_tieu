@@ -4,56 +4,69 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sổ Cái</title>
-    <link rel="stylesheet" href="static/css/home.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <script src="{{ url_for('static', filename='js/home.js') }}"></script>
 </head>
 <body>
-
     <div class="header">
-        <i class="fas fa-bars"></i>
-        <span>Sổ cái mặc định</span>
-        <button class="invoice-btn">Hóa đơn</button>    
-        
-       
+
         <div class="avatar-container">
             <div class="avatar-wrapper">
                 <img src="{{ url_for('serve_image', filename=user.avatar if user.avatar else 'default-avatar.jpg') }}" alt="Avatar">
             </div>
-
             <div class="dropdown-content">
                 <a href="/editProfile">Chỉnh sửa</a>
                 <a href="/viewProfile">Xem hồ sơ</a>
+                <a href="/logout">Đăng xuất</a>
             </div>
         </div>
     </div>
         
-    
+    <div class="container">
+        <div class="summary-box">
+            <div class="date-picker">
+                <span class="month-nav" id="prevMonth">←</span>
+                <span id="currentMonthYear"></span>
+                <span class="month-nav" id="nextMonth">→</span>
+            </div>
+            <div class="summary-content">
+                <div class="summary-item">
+                    <span>Thu nhập</span>
+                    <div class="amount" id="incomeAmount">0 ₫</div>
+                </div>
+                <div class="summary-item">
+                    <span>Chi tiêu</span>
+                    <div class="amount" id="expenseAmount">0 ₫</div>
+                </div>
+                <div class="summary-item">
+                    <span>Số dư</span>
+                    <div class="amount" id="balanceAmount">0 ₫</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="filter-buttons">
+            <button class="active" data-type="all">Toàn bộ</button>
+            <button data-type="income">Thu nhập</button>
+            <button data-type="expense">Chi tiêu</button>
+        </div>
+        
+        <div class="recent-transactions">
+        </div>
 
-    <div class="top-buttons">
-        <button class="btn ledger"><i class="fas fa-book"></i> Sổ cái</button>
-        <button class="btn add"><i class="fas fa-plus"></i> Thêm v...</button>
+        
     </div>
 
     <div class="bottom-menu">
-        <button class="category-btn"><i class="fas fa-book"></i> Danh mục </button>
-        <button class="account-btn"><i class="fas fa-wallet"></i> Tài khoản </button>
+        <button class="category-btn"><i class="fas fa-book"></i> Danh mục</button>
+        <button class="account-btn"><i class="fas fa-wallet"></i> Tài khoản</button>
         <button class="analytics-btn"><i class="fas fa-chart-pie"></i> Phân tích</button>
-        <button class="budget-btn"><i class="fas fa-cash-register"></i> Ngân sách </button>
-        <button class="saving-goal-btn"><i class="fas fa-piggy-bank"></i> Mục tiêu tiết kiệm </button>
-
+        <button class="budget-btn"><i class="fas fa-cash-register"></i> Ngân sách</button>
+        <button class="saving-goal-btn"><i class="fas fa-piggy-bank"></i> Mục tiêu tiết kiệm</button>
     </div>
 
     <button class="floating-btn"><i class="fas fa-pencil-alt"></i></button>
-    <a href="/editProfile" class="edit-profile-btn">Edit</a>
-    <a href="/register" class="register-btn">Register</a>
-    <a href="/categories-page" class="category-btn">Category</a>
-    <a href="/transactions" class="transaction-btn">Transaction</a>
-    <a href="/bank_account" class="bank-account-btn">Bank Account</a>
-    <a href="/home_saving_goal" class="btn add">Saving goalgoal</a>
-    <a href="/budgets" class="btn budget">Budget </a>
 
-
-
+    <script src="{{ url_for('static', filename='js/home.js') }}"></script>
 </body>
 </html>

@@ -1,5 +1,5 @@
-from flask import Blueprint, request, jsonify, render_template, session
-from models import SavingsGoal, db
+from flask import Blueprint, request, jsonify, render_template, session, redirect, url_for
+from models import SavingsGoal, db, DepositTransaction
 from datetime import datetime
 
 saving_goal_bp = Blueprint('saving_goal', __name__)
@@ -54,7 +54,23 @@ def detail_saving_goal():
         return "Bạn chưa đăng nhập",401
     goals = SavingsGoal.query.filter_by(user_id=user_id).all()
 
-    return render_template('detail_saving_goal.html',goals=goals)
+    goals_with_progress = []
+    for goal in goals:
+        total_deposited = db.session.query(db.func.sum(DepositTransaction.deposit_amount)).filter(DepositTransaction.goal_id == goal.goal_id).scalar() or 0
+        
+        if goal.target_amount > 0:
+            completion_percentage = (total_deposited / goal.target_amount) * 100
+        else:
+            completion_percentage = 0
+        
+        goals_with_progress.append({
+            'goal': goal,
+            'total_deposited': total_deposited,
+            'completion_percentage': completion_percentage
+        })
+
+
+    return render_template('detail_saving_goal.html', goals_with_progress=goals_with_progress,goals=goals)
 
 
 
@@ -111,14 +127,11 @@ def update_goal(goal_id):
 
     data = request.get_json()
     print(f"Dữ liệu nhận được để cập nhật: {data}")
-
-
-
     try:
+        data = request.get_json()
         goal = parse_goal_data(data, goal)
         db.session.commit()
-        return jsonify({'message': 'Đã cập nhật mục tiêu'})
-
+        return jsonify({'message': 'Đã cập nhật mục tiêu', 'goal_id': goal.goal_id}), 200
     except ValueError as ve:
         return jsonify({'error': str(ve)}), 400
     except Exception as e:
@@ -127,10 +140,17 @@ def update_goal(goal_id):
 # Xóa mục tiêu
 @saving_goal_bp.route('/goals/delete/<int:goal_id>', methods=['DELETE'])
 def delete_goal(goal_id):
-    goal = SavingsGoal.query.get(goal_id)
-    if not goal:
-        return jsonify({'error': 'Không tìm thấy mục tiêu'}), 404
-
-    db.session.delete(goal)
-    db.session.commit()
-    return jsonify({'message': f'Đã xóa mục tiêu {goal_id}'})
+     try:
+        goal = SavingsGoal.query.get(goal_id)
+        if not goal:
+            return jsonify({'error': 'Không tìm thấy mục tiêu'}), 404
+        
+        DepositTransaction.query.filter_by(goal_id=goal_id).delete()
+    
+    
+        db.session.delete(goal)
+        db.session.commit()
+        return jsonify({'message': f'Đã xóa mục tiêu {goal_id}'})
+     except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500

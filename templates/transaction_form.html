@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>{{ 'Chỉnh sửa giao dịch' if transaction else 'Chi tiêu' }}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/transaction_form.css') }}">
+  <script src="{{ url_for('static', filename='js/transaction_form.js') }}"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+  <div class="header">
+    <button class="back-button">←</button>
+    <script>
+      document.querySelector('.back-button').addEventListener('click', function(event) {
+        event.preventDefault(); 
+        window.location.href = "/home";
+      });
+    </script>
+    <button class="setting-button"><i class="fas fa-cog"></i></button>
+  </div>
+
+  <form method="POST" action="{% if transaction %}{{ url_for('transaction.edit_transaction', transaction_id=transaction.transaction_id) }}{% else %}{{ url_for('transaction.add_transaction') }}{% endif %}">
+    <div class="main-container">
+      <div class="left-section">
+        <h2>Loại giao dịch</h2>
+        <select name="transaction_type" required>
+          <option value="Chi tiêu" {% if transaction and transaction.transaction_type == 'expense' %}selected{% endif %}>Chi tiêu</option>
+          <option value="Thu nhập" {% if transaction and transaction.transaction_type == 'income' %}selected{% endif %}>Thu nhập</option>
+        </select><br>
+
+        <h2>Danh mục chi tiêu</h2>
+        <input type="hidden" name="category_id" id="selectedCategory" value="{{ transaction.category_id if transaction else '' }}" required>
+
+        <div class="category-grid">
+          {% for category in categories %}
+            <button type="button" 
+                    class="category-item {% if transaction and transaction.category_id == category.category_id %}selected{% endif %}" 
+                    data-category-id="{{ category.category_id }}"
+                    onclick="selectCategory(this)">
+              <span class="category-icon">{{ category.icon }}</span>
+              <span class="category-name">{{ category.name }}</span>
+            </button>
+          {% endfor %}
+        </div>
+
+        <h2>Tài khoản ngân hàng</h2>
+        <div class="account-grid">
+          {% for account in accounts %}
+            <button type="button" 
+                    data-account-id="{{ account.account_id }}" 
+                    onclick="selectAccount(this)"
+                    class="{% if transaction and transaction.account_id == account.account_id %}selected{% endif %}">
+              <span class="name">{{ account.account_name }}</span>
+              <span class="balance">({{ account.balance }} đ)</span>
+            </button>
+          {% endfor %}
+        </div>
+        <input type="hidden" name="account_id" id="selectedAccount" value="{{ transaction.account_id if transaction else '' }}">
+      </div>
+
+      <div class="right-section">
+        <div class="note-bar">
+          <div class="account-icon">💳</div>
+          <input type="text" name="note" placeholder="Ghi chú..." id="noteInput" value="{{ transaction.note if transaction else '' }}">
+          <input type="text" name="amount" placeholder="Số tiền" class="amount-display" required 
+                value="{{ '{:,.0f}'.format(transaction.amount).replace(',', '.') if transaction else '' }}">
+
+           </div>
+
+           <div class="date-bar">
+            <input type="datetime-local" name="transaction_date" id="todayInput" step="1"
+                   value="{{ transaction.transaction_date.strftime('%Y-%m-%dT%H:%M:%S') if transaction and transaction.transaction_date else '' }}" required>
+            <button type="button" class="now-button" id="now-button">Bây giờ </button>
+          </div>
+
+        <div class="submit-button">
+          <button type="submit">{{ 'Cập nhật giao dịch' if transaction else 'Ghi nhận giao dịch' }}</button>
+        </div>
+
+        {% if not transaction %}
+        <section class="recent-transactions">
+          <h2>Giao dịch gần đây</h2>
+        </section>
+        {% endif %}
+      </div>
+    </div>
+  </form>
+</body>
+</html>

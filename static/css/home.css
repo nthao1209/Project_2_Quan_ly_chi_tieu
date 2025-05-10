@@ -16,8 +16,10 @@ body {
     justify-content: space-between;
     align-items: center;
     font-size: 18px;
+    z-index: 1000;
 }
 
+/* Nút hóa đơn */
 .invoice-btn {
     background: white;
     border: none;
@@ -26,27 +28,6 @@ body {
     border-radius: 20px;
     font-weight: bold;
     cursor: pointer;
-}
-
-/* Top Buttons */
-.top-buttons {
-    display: flex;
-    justify-content: space-around;
-    padding: 15px;
-}
-
-.btn {
-    background: #ffb3c6;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 10px;
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.btn.add {
-    background: #ff85a2;
 }
 
 /* Summary Box */
@@ -65,6 +46,17 @@ body {
     gap: 10px;
     font-size: 16px;
     margin-bottom: 10px;
+}
+
+.month-nav {
+    cursor: pointer;
+    font-size: 18px;
+}
+
+#currentMonthYear {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
 }
 
 .summary-content {
@@ -88,7 +80,7 @@ body {
     display: flex;
     justify-content: center;
     gap: 10px;
-    margin-top: 10px;
+    margin: 10px 0;
 }
 
 .filter-buttons button {
@@ -97,6 +89,7 @@ body {
     background: #ffd3e0;
     border-radius: 15px;
     cursor: pointer;
+    font-size: 14px;
 }
 
 .filter-buttons .active {
@@ -104,12 +97,68 @@ body {
     color: white;
 }
 
-/* Empty State */
-.empty-state {
-    text-align: center;
+/* Recent Transactions */
+.recent-transactions {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
     margin-top: 20px;
-    color: #ff70a6;
-    font-size: 16px;
+    padding: 0 12px 100px; /* padding-bottom tránh đè bottom menu */
+}
+
+/* Mỗi giao dịch */
+.recent-transaction-box {
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: transform 0.2s ease;
+}
+
+.recent-transaction-box:hover {
+    transform: scale(1.01);
+}
+
+.transaction-category {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.category-icon {
+    font-size: 24px;
+    background-color: #f2f2f2;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Số tiền */
+.transaction-amount {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.transaction-amount.income {
+    color: #2ecc71;
+}
+
+.transaction-amount.expense {
+    color: #e74c3c;
+}
+
+/* Không có giao dịch */
+.no-transactions {
+    text-align: center;
+    color: #999;
+    font-style: italic;
+    margin-top: 20px;
 }
 
 /* Bottom Navigation */
@@ -122,6 +171,7 @@ body {
     bottom: 0;
     width: 100%;
     box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+    z-index: 999;
 }
 
 .bottom-menu button {
@@ -130,16 +180,21 @@ body {
     font-size: 14px;
     color: #ff70a6;
     cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
 }
 
-.bottom-menu button i, .top-buttons .btn i {
-    font-size: 20px; /* Đảm bảo icon đủ lớn */
-    color: #ff70a6;  /* Màu sắc cho icon */
+.bottom-menu button i {
+    font-size: 20px;
+    color: #ff70a6;
 }
+
 /* Floating Button */
 .floating-btn {
     position: fixed;
-    bottom: 70px;
+    bottom: 80px; /* nâng lên tránh đè bottom-menu */
     right: 20px;
     background: #ff70a6;
     border: none;
@@ -149,37 +204,40 @@ body {
     font-size: 18px;
     cursor: pointer;
     box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
 }
 
-
+/* Avatar */
 .avatar-container {
     position: relative;
     display: inline-block;
 }
 
 .avatar-wrapper {
-    width: 50px;  /* Đặt kích thước của avatar */
-    height: 50px; /* Đặt kích thước của avatar */
-    border-radius: 50%;  /* Làm cho avatar thành hình tròn */
-    overflow: hidden;  /* Cắt phần ảnh thừa ngoài hình tròn */
-    border: 2px solid #ff99cc; /* Đặt viền quanh avatar */
-    background-color: #ffcce5;  /* Màu nền cho avatar nếu không có ảnh */
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid #ff99cc;
+    background-color: #ffcce5;
+    cursor: pointer;
 }
 
 .avatar-wrapper img {
     width: 100%;
     height: 100%;
-    object-fit: cover;  /* Đảm bảo ảnh vừa vặn trong hình tròn mà không bị kéo giãn */
+    object-fit: cover;
 }
 
-
+/* Dropdown */
 .dropdown-content {
+    display: none;
     position: absolute;
     top: 100%;
     right: 0;
     background-color: white;
     min-width: 120px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
     z-index: 1;
     border-radius: 8px;
     overflow: hidden;
@@ -194,4 +252,71 @@ body {
 
 .dropdown-content a:hover {
     background-color: #f1f1f1;
+}
+
+/* Thông báo lỗi */
+.error-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: #e74c3c;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+}
+
+/* Đảm bảo body không bị cuộn khi modal hiển thị */
+body.modal-open {
+    overflow: hidden;
+}
+
+/* Overlay phủ toàn màn hình */
+.modal-overlay {
+    position: fixed; /* Vị trí cố định để phủ toàn trang */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Nền mờ */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Đảm bảo modal nằm trên các phần tử khác */
+}
+
+/* Định dạng cho modal */
+.transaction-detail-modal {
+    background: #ffe6f0; /* Màu nền giống trong ảnh */
+    padding: 20px;
+    border-radius: 10px;
+    width: 300px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Thêm bóng cho modal */
+}
+
+/* Nút đóng */
+.close-btn {
+    float: right;
+    cursor: pointer;
+    font-size: 24px;
+    color: #ff4d4d; /* Màu nút đóng giống trong ảnh */
+}
+
+/* Nội dung bên trong modal */
+.modal-content p {
+    margin: 5px 0;
+    font-size: 14px;
+}
+
+/* Đảm bảo biểu tượng và tiêu đề được định dạng đúng */
+.category-icon {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+h3 {
+    margin: 10px 0;
+    font-size: 18px;
 }

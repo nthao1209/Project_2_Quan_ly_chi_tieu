@@ -1,238 +1,416 @@
 body {
-  font-family: Arial, sans-serif;
+  font-family: 'Segoe UI', 'Roboto', sans-serif;
+  background: linear-gradient(135deg, #fff5f8, #ffebf2);
+  color: #333;
   margin: 0;
   padding: 0;
-  background: #f4f7fc; /* Màu nền nhẹ nhàng, pastel */
+  line-height: 1.6;
+  font-size: 16px;
+  overflow-x: hidden;
 }
 
+/* Container */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 15px;
+}
+
+/* Header */
 .header {
-  background-color: #ff80ab; 
-  color: white;
-  padding: 16px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
+  position: relative;
+  background: linear-gradient(90deg, #ff70a6, #ff99bb);
+  border: 2px solid #ffc1d3;
+  border-radius: 20px;
+  padding: 15px 20px;
+  box-shadow: 0 4px 15px rgba(255, 112, 166, 0.4);
+  margin: 20px 10px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.header h1 {
-  font-size: 24px;
-  color: #f1eeef;
-  text-align: center; /* Căn giữa tiêu đề */
-  width: 100%; /* Đảm bảo tiêu đề chiếm hết chiều rộng */
-  margin: 0; /* Loại bỏ margin mặc định */
+.header:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(255, 112, 166, 0.6);
 }
 
 .back-button {
-  font-size: 32px; /* Tăng kích thước nút */
+  position: absolute;
+  left: 15px;
+  font-size: 32px;
+  color: #ffffff;
   cursor: pointer;
-  margin-right: 20px; /* Để tạo khoảng cách giữa nút và tiêu đề */
-} 
+  transition: transform 0.3s ease, color 0.3s ease;
+}
 
-.filters {
-  background: #f8bbd0;  /* Hồng pastel */
-  padding: 8px 16px;
+.back-button:hover {
+  transform: scale(1.15);
+  color: #fff5f8;
+}
+
+.header-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #ffffff;
+  text-align: center;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: color 0.3s ease;
+}
+
+.header:hover .header-title {
+  color: #fff0f5;
+}
+
+/* Add Button */
+.add-button {
+  text-align: center;
+  margin: 25px 15px;
+}
+
+.btn-add {
+  background: linear-gradient(90deg, #ff70a6, #ff99bb);
+  color: #ffffff;
+  border: none;
+  border-radius: 30px;
+  padding: 14px 25px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(255, 112, 166, 0.4);
+  transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.btn-add:hover {
+  transform: scale(1.08);
+  background: linear-gradient(90deg, #ff99bb, #ff70a6);
+  box-shadow: 0 6px 18px rgba(255, 112, 166, 0.6);
+}
+
+/* Account List */
+.account-list {
+  margin: 0 15px;
+  opacity: 0;
+  animation: fadeIn 0.9s ease-in forwards 0.2s;
+}
+.actions-container {
   display: flex;
-  gap: 10px;
+  justify-content: center;
+  gap: 15px;
+  margin: 25px 15px;
   flex-wrap: wrap;
 }
 
-.account-list {
-  padding: 16px;
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .account-item {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 12px;
-  border-bottom: 1px solid #eee;
-  background-color: #ffffff;  /* Màu nền trắng để nổi bật */
-  border-radius: 8px;  /* Bo góc để mềm mại hơn */
+  background: linear-gradient(135deg, #ffffff, #fff8fb);
+  border-radius: 15px;
+  padding: 18px;
+  margin-bottom: 18px;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
 }
 
-.account-item img {
-  width: 40px;
+.account-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  background: linear-gradient(135deg, #fff8fb, #ffebf2);
 }
 
-.add-button {
-  padding: 10px;  /* Giảm padding để box nhỏ hơn */
-  text-align: center;
-  border-top: 1px solid #f4eeee;
-  background-color: #f8bbd0;  /* Màu nền cho box */
-  position: fixed;
-  bottom: 16px;  /* Đẩy lên một chút để không bị chạm dưới cùng */
-  width: auto;  /* Để chiều rộng tự động theo nội dung */
-  max-width: 250px;  /* Giới hạn chiều rộng box không vượt quá 250px */
-  left: 50%;  /* Đặt box ở giữa màn hình */
-  transform: translateX(-50%);  /* Căn giữa chính xác */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Thêm bóng cho box */
-  border-radius: 12px; /* Bo góc để tạo sự mềm mại */
+.account-icon {
+  width: 45px;
+  height: 45px;
+  margin-right: 18px;
+  transition: transform 0.3s ease;
 }
 
-.add-button button {
+.account-item:hover .account-icon {
+  transform: scale(1.1);
+}
+
+.account-info {
+  flex: 1;
+  font-size: 16px;
+  color: #444;
+}
+
+.account-details {
+  display: block;
+  font-weight: 500;
+}
+
+.default-label {
+  color: #ff70a6;
+  font-size: 14px;
+  font-weight: 600;
+  background: #fff0f5;
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+/* Account Actions */
+.account-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.account-actions button {
   background: none;
   border: none;
-  color: #e91e63;  /* Màu cho nút */
-  font-size: 16px;  /* Giảm font-size để chữ nhỏ hơn */
-  font-weight: bold;
   cursor: pointer;
-  padding: 10px;  /* Giảm kích thước nút */
-  border-radius: 12px; /* Bo góc cho nút */
+  font-size: 20px;
+  transition: transform 0.3s ease, color 0.3s ease;
 }
 
-.add-button button:hover {
-  color: #ff80ab; /* Màu sáng hơn khi hover */
-  background-color: #f7c9e1; /* Nền nhẹ khi hover */
+.edit-account-btn {
+  color: #ff70a6;
 }
 
-.add-button button:focus {
-  outline: none;
-  box-shadow: 0 0 5px rgba(255, 105, 180, 0.5); /* Thêm hiệu ứng focus */
+.edit-account-btn:hover {
+  transform: scale(1.15);
+  color: #ff99bb;
 }
 
-.account-item button {
-  background-color: #ff80ab;  /* Màu hồng sáng cho các nút */
-  color: white;
-  border: none;
-  padding: 8px 12px;
-  border-radius: 5px;
-  cursor: pointer;
+.delete-account {
+  color: #e57373;
 }
 
-.account-item button:hover {
-  background-color: #ff4d80;  /* Màu khi hover */
+.delete-account:hover {
+  transform: scale(1.15);
+  color: #d32f2f;
 }
 
-/* Form Cập Nhật Tài Khoản */
-.form-modal {
-  position: fixed;  /* Đảm bảo form sẽ đứng yên và phủ trên toàn bộ màn hình */
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  display: flex;
-  justify-content: center;  /* Căn giữa theo chiều ngang */
-  align-items: center;  /* Căn giữa theo chiều dọc */
-  background-color: rgba(0, 0, 0, 0.5);  /* Làm mờ nền bên ngoài form */
-  z-index: 999;  /* Đảm bảo form ở trên các thành phần khác */
-  padding: 200px;  /* Thêm padding để form không chạm vào viền*/
+.set-default {
+  color: #ffb300;
 }
 
-.form-modal-content {
-  background-color: #fff;
-  border-radius: 8px;
-  padding: 20px;
-  width: 100%;
-  max-width: 400px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+.set-default:hover {
+  transform: scale(1.15);
+  color: #ff8f00;
 }
 
-/* Các nhãn trong form */
-.form-modal-content label {
-  color: #e91e63;  /* Màu chữ cho các nhãn */
-  font-size: 14px;
-  margin-bottom: 5px;
-  display: block;
-}
-
-/* Các input trong form */
-.form-modal-content input {
-  width: 100%;
-  padding: 8px;
-  margin-bottom: 16px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  font-size: 14px;
-}
-
-/* Nút Lưu và Hủy */
-.form-actions button {
-  background-color: #e91e63; /* Màu nền hồng pastel */
-  color: white; /* Màu chữ trắng */
-  border: none;
-  padding: 10px 20px;
-  margin-right: 10px;
-  font-size: 14px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.form-actions button:hover {
-  background-color: #d81b60; /* Màu nền khi hover */
-}
-
-/* Nút Hủy */
-#cancel-update {
-  background-color: #4d4c4b; /* Màu đỏ cho nút Hủy */
-}
-
-#cancel-update:hover {
-  background-color: #453d3d; /* Màu nền khi hover cho nút Hủy */
-}
-
-
-/* Modal thêm tài khoản */
-.add-account-modal {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: #fce4ec;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  width: 80%; /* Đảm bảo modal không quá rộng */
-  max-width: 500px;
-  display: none;
-  z-index: 1000;
-  text-align: center; /* Căn giữa nội dung */
-  border: 1px solid #f8bbd0;
-}
-
-.add-account-modal input {
-  width: calc(100% - 20px); 
-  padding: 10px;
-  margin-bottom: 15px;
-  border: 1px solid #f8bbd0; /* Màu viền nhẹ nhàng */
-  border-radius: 4px;
-  font-size: 14px;
-  background-color: #fff; /* Nền trắng cho các input */
-}
-
-.add-account-modal .modal-actions {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-}
-
-.add-account-modal .modal-actions button {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 6px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-  background-color: #e91e63; /* Màu hồng pastel cho nút Lưu */
-  color: white;
-}
-
-.add-account-modal .modal-actions button:hover {
-  background-color: #d81b60; /* Đậm hơn khi hover */
-  transform: scale(1.05);
-}
-
-.add-account-modal .modal-actions button:nth-child(2):hover {
-  background-color: #ff4081; /* Màu hồng nhẹ cho nút Hủy */
-}
-
+/* Overlay */
 .overlay {
+  display: none;
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+}
+
+/* Modal Styling */
+.add-account-modal, .form-modal {
   display: none;
-  z-index: 999;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(135deg, #fff8fb, #ffebf2);
+  border: 2px solid #ffc1d3;
+  border-radius: 25px;
+  padding: 30px;
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.3);
+  z-index: 1001;
+  width: 90%;
+  max-width: 400px;
+  opacity: 0;
+  animation: modalFadeIn 0.6s ease forwards;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -60%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+.modal-title {
+  font-size: 22px;
+  color: #ff70a6;
+  margin: 0 0 25px;
+  text-align: center;
+  font-weight: 700;
+}
+
+.modal-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-label {
+  display: block;
+  font-size: 15px;
+  font-weight: 600;
+  color: #555;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.form-input {
+  width: 100%;
+  padding: 14px;
+  margin-bottom: 20px;
+  border: 2px solid #ffc1d3;
+  border-radius: 12px;
+  font-size: 16px;
+  box-sizing: border-box;
+  background-color: #ffffff;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-input:focus {
+  border-color: #ff70a6;
+  box-shadow: 0 0 10px rgba(255, 112, 166, 0.3);
+  outline: none;
+}
+
+/* Modal Actions */
+.modal-actions, .form-actions {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.btn-save, .btn-cancel {
+  padding: 14px 30px;
+  border: none;
+  border-radius: 30px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.btn-save {
+  background: linear-gradient(90deg, #ff70a6, #ff99bb);
+  color: #ffffff;
+}
+
+.btn-save:hover {
+  transform: scale(1.08);
+  background: linear-gradient(90deg, #ff99bb, #ff70a6);
+  box-shadow: 0 6px 18px rgba(255, 112, 166, 0.6);
+}
+
+.btn-cancel {
+  background-color: #e0e0e0;
+  color: #333;
+}
+
+.btn-cancel:hover {
+  transform: scale(1.08);
+  background-color: #bdbdbd;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+  .container {
+    padding: 0 10px;
+  }
+
+  .header {
+    margin: 15px 5px;
+    padding: 10px 15px;
+  }
+
+  .back-button {
+    left: 10px;
+    font-size: 28px;
+  }
+
+  .header-title {
+    font-size: 20px;
+  }
+
+  .add-button {
+    margin: 20px 10px;
+  }
+
+  .btn-add {
+    padding: 12px 20px;
+    font-size: 14px;
+  }
+
+  .account-list {
+    margin: 0 10px;
+  }
+
+  .account-item {
+    padding: 15px;
+    margin-bottom: 15px;
+  }
+
+  .account-icon {
+    width: 40px;
+    height: 40px;
+    margin-right: 15px;
+  }
+
+  .account-info {
+    font-size: 14px;
+  }
+
+  .default-label {
+    font-size: 12px;
+  }
+
+  .account-actions button {
+    font-size: 18px;
+  }
+
+  .add-account-modal, .form-modal {
+    width: 85%;
+    padding: 20px;
+    max-width: 350px;
+  }
+
+  .modal-title {
+    font-size: 20px;
+    margin-bottom: 20px;
+  }
+
+  .form-label {
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+
+  .form-input {
+    padding: 12px;
+    margin-bottom: 15px;
+    font-size: 14px;
+  }
+
+  .modal-actions, .form-actions {
+    gap: 15px;
+  }
+
+  .btn-save, .btn-cancel {
+    padding: 12px 25px;
+    font-size: 14px;
+  }
 }

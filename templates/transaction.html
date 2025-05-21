@@ -5,29 +5,61 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/transaction.css') }}">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
 
 </head>
 <body>
   <div class="container">
     <div class="header">
-      Chi tiết danh mục
+      <div class="back-button" id = "back">←</div>
+            <script>
+            document.getElementById('back').addEventListener('click', function () {
+                window.location.href = '/categories-page'; 
+            });
+            </script>
+        <h2> Chi tiết danh mục </h2>
     </div>
-    <div class="title">{{category.name}} <span class="emoji">{{category.icon}}</span></div>
-    <div class="date-picker">
+        <div class="category-summary-container">
+        <div class="title">{{category.name}} <span class="emoji">{{category.icon}}</span></div>
+        <div class="date-picker">
             <span class="month-nav" id="prevMonth"><</span>
             <span id="currentMonthYear"></span>
             <span class="month-nav" id="nextMonth">></span>
         </div>   
-    <div class="quantity"></div>
-    <div class="price"></div>
-    <div class="total">
-      <span>{{total_amount}}</span>
-      <span>{{percentage}}%</span>
-      <span>{{remaining_budget}}</span>
+        <div class="summary-box">
+            <div class="summary-item">
+                <span class="label">Số giao dịch:</span>
+                <span class="value">{{ total_count }}</span>
+            </div>
+            <div class="summary-item">
+                <span class="label">Ngân sách:</span>
+                <span class="value"></span>
+            </div>
+            <div class="summary-item">
+                <span class="label">Đã chi:</span>
+                <span class="value">{{ "{:,.0f}".format(total_amount) }} đ</span>
+            </div>
+            <div class="summary-item">
+                <span class="label">Tỷ lệ:</span>
+                <span class="value">{{ "%.2f"|format(percentage) }}%</span>
+            </div>
+            <div class="summary-item">
+                <span class="label">Còn lại:</span>
+                <span class="value">{{ "{:,.0f}".format(remaining_budget) }} đ</span>
+            </div>
+        </div>
     </div>
-    <canvas id="expenseChart" width="300" height="300"></canvas>
 
-    <div id="detailsContainer" class="details-container"></div>
+        <div class="chart-details-container">
+        <div class="chart-box">
+            <canvas id="expenseChart" width="100" height="100"></canvas>
+        </div>
+        <div id="detailsContainer" class="details-container"></div>
+    </div>
+
+    <button class="floating-btn"><i class="fas fa-pencil-alt"></i></button>
+
 
     <script src="{{ url_for('static', filename='js/transaction.js') }}"></script>
   </div>

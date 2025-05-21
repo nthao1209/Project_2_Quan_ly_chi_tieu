@@ -1,6 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
   let currentGoalId = null;
-  const editForm = document.getElementById('edit-goal-form');
   const modal = document.getElementById('edit-form');
   const formTitle = document.getElementById('form-title');
 

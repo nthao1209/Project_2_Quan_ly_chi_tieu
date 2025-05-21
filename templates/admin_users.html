@@ -1,0 +1,25 @@
+<h2>Quản lý người dùng</h2>
+<table border="1">
+  <tr>
+    <th>ID</th>
+    <th>Email</th>
+    <th>Tên</th>
+    <th>Trạng thái</th>
+    <th>Hành động</th>
+  </tr>
+  {% for user in users %}
+  <tr>
+    <td>{{ user.user_id }}</td>
+    <td>{{ user.email }}</td>
+    <td>{{ user.name }}</td>
+    <td>{{ "Hoạt động" if user.is_active else "Đã khóa" }}</td>
+    <td>
+      <form method="post" action="{{ url_for('admin_bp.toggle_user_status', user_id=user.user_id) }}">
+        <button type="submit">
+          {{ "Khóa" if user.is_active else "Mở khóa" }}
+        </button>
+      </form>
+    </td>
+  </tr>
+  {% endfor %}
+</table>

@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const form = document.querySelector('form');
+    const form = document.querySelector('#register-form');
 
     form.addEventListener('submit', async function(e) {
         e.preventDefault();
@@ -14,6 +14,12 @@ document.addEventListener('DOMContentLoaded', function() {
             password: passwordFields[0]?.value || "",
             confirm_password: passwordFields[1]?.value || "",
         };
+
+        if (!formData.name || !formData.ngay_sinh || !formData.gioi_tinh || 
+            !formData.email || !formData.phone || !formData.password) {
+            alert("Vui lòng điền đầy đủ thông tin!");
+            return;
+        }
 
         if (formData.password !== formData.confirm_password) {
             alert("Mật khẩu xác nhận không khớp!");
@@ -32,6 +38,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const result = await response.json();
             if (response.ok) {
                 alert("Đăng ký thành công!");
+                window.location.href = "/login";
             } else {
                 alert("Lỗi: " + result.message);
             }

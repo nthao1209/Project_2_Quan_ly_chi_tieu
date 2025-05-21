@@ -10,6 +10,8 @@ class User(db.Model):
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
     ngay_sinh = db.Column(db.Date, nullable=False)  
     gioi_tinh = db.Column(db.String(15), nullable=False)
+    is_active = db.Column(db.Boolean,default=True)
+    categories_copied = db.Column(db.Boolean, default=False)
     __table_args__ = (
         db.CheckConstraint("gioi_tinh IN ('Nam', 'Nữ', 'Không cho biết')", name="gioi_tinh_check"),
     )

@@ -2,22 +2,23 @@ body {
   font-family: 'Segoe UI', sans-serif;
   margin: 0;
   padding: 0;
-  background: #f9f9f9;
+  background: linear-gradient(135deg, #fff7fa, #ffebf2);
   color: #333;
 }
 
 .container {
   max-width: 600px;
   margin: 40px auto;
-  background: white;
-  border-radius: 16px; /* Thêm bo góc mềm mại */
+  background: linear-gradient(135deg, #ffffff, #fff8fb);
+  border-radius: 16px;
   padding: 30px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1); /* Tăng độ mờ của bóng đổ */
-  transition: box-shadow 0.3s ease-in-out; /* Thêm hiệu ứng khi hover */
+  box-shadow: 0 4px 16px rgba(255, 112, 166, 0.2);
+  transition: box-shadow 0.3s ease-in-out, transform 0.3s ease;
 }
 
 .container:hover {
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2); /* Hiệu ứng hover cho container */
+  transform: translateY(-4px);
+  box-shadow: 0 8px 32px rgba(255, 112, 166, 0.3);
 }
 
 /* Header chứa tiêu đề và nút quay lại */
@@ -26,9 +27,15 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 15px;
-  background-color: #f06292; /* Màu nền header */
+  background: linear-gradient(90deg, #ff70a6, #ff99bb);
   color: white;
-  border-radius: 16px 16px 0 0; /* Bo góc trên */
+  border-radius: 16px 16px 0 0;
+  box-shadow: 0 2px 10px rgba(255, 112, 166, 0.3);
+  transition: box-shadow 0.3s ease;
+}
+
+.header:hover {
+  box-shadow: 0 4px 15px rgba(255, 112, 166, 0.5);
 }
 
 /* Dấu quay lại */
@@ -38,19 +45,29 @@ body {
   text-decoration: none;
   background: transparent;
   cursor: pointer;
+  transition: transform 0.3s ease, color 0.3s ease;
 }
 
 .back-btn:hover {
-  color: #ec407a; /* Màu hover cho biểu tượng quay lại */
+  transform: scale(1.1);
+  color: #fff5f8;
 }
 
 /* Tiêu đề */
 .header h2 {
   margin: 0;
   font-size: 1.5em;
-  font-weight: bold;
+  font-weight: 700;
   text-align: center;
-  flex-grow: 1; /* Căn giữa tiêu đề */
+  flex-grow: 1;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #ffffff;
+  transition: color 0.3s ease;
+}
+
+.header:hover h2 {
+  color: #fff0f5;
 }
 
 /* Nút Sửa */
@@ -61,6 +78,12 @@ body {
   border: none;
   color: white;
   cursor: pointer;
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.edit-btn:hover {
+  transform: scale(1.1);
+  color: #fff5f8;
 }
 
 ul {
@@ -69,26 +92,94 @@ ul {
 }
 
 .goal-box {
-  background: #f0f4ff;
-  border-radius: 12px; /* Bo góc mềm mại */
+  background: #ffebf2;
+  border-radius: 12px;
   padding: 20px;
   margin: 10px 0;
   cursor: pointer;
-  transition: background 0.3s ease, transform 0.3s ease;
+  transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .goal-box:hover {
-  background: #dde7ff;
-  transform: scale(1.02); /* Thêm hiệu ứng phóng to nhẹ khi hover */
+  background: #ffdbe6;
+  transform: scale(1.02);
+  box-shadow: 0 4px 12px rgba(255, 112, 166, 0.2);
 }
 
-.goal-box h3 {
-  font-size: 1.2em; /* Kích thước tiêu đề lớn hơn */
-  color: #333;
+.goal-box strong {
+  font-size: 1.2em;
+  color: #ff70a6;
+  font-weight: 600;
+  display: block;
+  margin-bottom: 8px;
 }
 
 .goal-box p {
   color: #666;
+  font-size: 0.95em;
+  margin: 5px 0;
+}
+
+/* Progress bar cho tiến độ */
+.goal-box .progress-container {
+  width: 100%;
+  background-color: #ffc1d3;
+  border-radius: 5px;
+  height: 10px;
+  margin: 10px 0;
+  position: relative;
+}
+
+.goal-box .progress-bar {
+  background-color: #ff70a6;
+  height: 100%;
+  border-radius: 5px;
+  transition: width 0.3s ease;
+}
+
+/* Các nút trong goal-actions */
+.goal-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.deposit-btn, .update-btn {
+  padding: 8px 15px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.deposit-btn {
+  background: linear-gradient(90deg, #ff70a6, #ff99bb);
+  color: white;
+}
+
+.deposit-btn:hover {
+  transform: scale(1.05);
+  background: linear-gradient(90deg, #ff99bb, #ff70a6);
+  box-shadow: 0 4px 12px rgba(255, 112, 166, 0.4);
+}
+
+.update-btn {
+  background-color: #e0e0e0;
+  color: #333;
+}
+
+.update-btn:hover {
+  transform: scale(1.05);
+  background-color: #bdbdbd;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.goal-box hr {
+  border: 0;
+  border-top: 1px dashed #ffc1d3;
+  margin: 15px 0 0;
 }
 
 /* Modal chung */
@@ -98,20 +189,45 @@ ul {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.6);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 999;
+  backdrop-filter: blur(5px);
 }
 
 .modal-content {
-  background: #fff;
+  background: linear-gradient(135deg, #fff8fb, #ffebf2);
   padding: 24px 30px;
-  border-radius: 16px; /* Bo góc mềm mại */
+  border-radius: 16px;
   max-width: 450px;
   width: 90%;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Bóng đổ nhẹ cho modal */
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.3);
+  border: 2px solid #ffc1d3;
+  opacity: 0;
+  animation: modalFadeIn 0.6s ease forwards;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-content h2 {
+  font-size: 1.5em;
+  font-weight: 700;
+  color: #ff70a6;
+  text-align: center;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .hidden {
@@ -122,75 +238,181 @@ ul {
 .form-row {
   margin-bottom: 20px;
   display: flex;
-  align-items: center; /* Căn chỉnh icon và tên cùng 1 dòng */
-  color: #f06292; /* Màu hồng dễ thương */
+  align-items: center;
+  color: #ff70a6;
+}
+
+.input-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
 }
 
 .form-row label {
   display: inline-block;
-  font-weight: bold;
+  font-weight: 600;
   margin-bottom: 0;
-  margin-left: 10px; /* Khoảng cách giữa icon và label */
-  color: #f06292; /* Màu hồng dễ thương */
+  margin-left: 10px;
+  color: #ff70a6;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .form-row input,
 .form-row textarea {
   width: 100%;
   padding: 10px;
-  border-radius: 8px; /* Bo góc mềm mại */
-  border: 1px solid #ccc;
+  border-radius: 8px;
+  border: 2px solid #ffc1d3;
   font-size: 15px;
-  transition: border-color 0.3s ease;
+  background-color: #ffffff;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .form-row input:focus,
 .form-row textarea:focus {
-  border-color: #f06292; /* Màu hồng khi focus vào input */
-  outline: none; /* Tắt viền mặc định */
+  border-color: #ff70a6;
+  box-shadow: 0 0 8px rgba(255, 112, 166, 0.3);
+  outline: none;
 }
 
 textarea {
   resize: none;
-  height: 80px; /* Đảm bảo textarea đủ rộng để nhập */
+  height: 80px;
 }
 
-.icon-select {
+.input-container i {
   font-size: 24px;
-  margin-right: 15px; /* Khoảng cách giữa icon và trường nhập liệu */
-  color: #f06292; /* Màu hồng dễ thương */
+  color: #ff70a6;
+  transition: transform 0.3s ease;
+}
+
+.form-row:hover .input-container i {
+  transform: scale(1.1);
 }
 
 /* Nút hành động */
 .form-actions {
   display: flex;
   justify-content: flex-end;
-  gap: 12px; /* Khoảng cách giữa các nút */
+  gap: 12px;
+}
+
+.save-btn, .cancel-btn, .delete-btn {
+  padding: 10px 18px;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
 }
 
 .save-btn {
-  background: #f06292; /* Màu hồng dễ thương */
+  background: linear-gradient(90deg, #ff70a6, #ff99bb);
   color: white;
-  border: none;
-  padding: 10px 18px;
-  border-radius: 10px; /* Bo góc mềm mại */
-  cursor: pointer;
-  transition: background 0.3s ease;
 }
 
 .save-btn:hover {
-  background: #ec407a; /* Màu hồng đậm khi hover */
+  transform: scale(1.05);
+  background: linear-gradient(90deg, #ff99bb, #ff70a6);
+  box-shadow: 0 4px 12px rgba(255, 112, 166, 0.4);
 }
 
 .cancel-btn {
-  background: #ccc;
-  border: none;
-  padding: 10px 18px;
-  border-radius: 10px; /* Bo góc mềm mại */
-  cursor: pointer;
-  transition: background 0.3s ease;
+  background: #e0e0e0;
+  color: #333;
 }
 
 .cancel-btn:hover {
-  background: #bdbdbd; /* Màu xám đậm khi hover */
+  transform: scale(1.05);
+  background: #bdbdbd;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.delete-btn {
+  background: linear-gradient(90deg, #e57373, #d32f2f);
+  color: white;
+}
+
+.delete-btn:hover {
+  transform: scale(1.05);
+  background: linear-gradient(90deg, #d32f2f, #e57373);
+  box-shadow: 0 4px 12px rgba(229, 115, 115, 0.4);
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+  .container {
+    margin: 20px auto;
+    padding: 20px;
+  }
+
+  .header {
+    padding: 10px;
+  }
+
+  .header h2 {
+    font-size: 1.2em;
+  }
+
+  .back-btn, .edit-btn {
+    font-size: 20px;
+    padding: 4px 8px;
+  }
+
+  .goal-box {
+    padding: 15px;
+    margin: 8px 0;
+  }
+
+  .goal-box strong {
+    font-size: 1em;
+  }
+
+  .goal-box p {
+    font-size: 0.9em;
+  }
+
+  .goal-actions {
+    gap: 8px;
+  }
+
+  .deposit-btn, .update-btn {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+
+  .modal-content {
+    padding: 20px;
+    max-width: 350px;
+  }
+
+  .modal-content h2 {
+    font-size: 1.2em;
+  }
+
+  .form-row {
+    margin-bottom: 15px;
+  }
+
+  .form-row label {
+    font-size: 14px;
+    margin-left: 8px;
+  }
+
+  .form-row input,
+  .form-row textarea {
+    padding: 8px;
+    font-size: 14px;
+  }
+
+  .input-container i {
+    font-size: 20px;
+  }
+
+  .save-btn, .cancel-btn, .delete-btn {
+    padding: 8px 15px;
+    font-size: 12px;
+  }
 }

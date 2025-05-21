@@ -3,23 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sổ Cái</title>
+    <title> Quản lý chi tiêu cá nhân </title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
 <body>
     <div class="header">
 
-        <div class="avatar-container">
-            <div class="avatar-wrapper">
+                <nav class="navbar">
+            <!-- Các nút chính -->
+            <button class="nav-btn"><i class="fas fa-book"></i> Danh mục</button>
+            <button class="nav-btn"><i class="fas fa-wallet"></i> Tài khoản</button>
+            <button class="nav-btn"><i class="fas fa-chart-pie"></i> Phân tích</button>
+            <button class="nav-btn"><i class="fas fa-cash-register"></i> Ngân sách</button>
+            <button class="nav-btn"><i class="fas fa-piggy-bank"></i> Mục tiêu tiết kiệm</button>
+
+            
+            <!-- Dropdown -->
+            <div class="dropdown">
+                <div class="avatar-wrapper">
                 <img src="{{ url_for('serve_image', filename=user.avatar if user.avatar else 'default-avatar.jpg') }}" alt="Avatar">
+                </div>
+                <div class="dropdown-content">
+                    <a href="/editProfile"><i class="fas fa-user-edit"></i> Chỉnh sửa</a>
+                    <a href="/viewProfile"><i class="fas fa-id-card"></i> Xem hồ sơ</a>
+                    <a href="/logout"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
+                    <a href="/delete_account" id="deleteAccountLink"><i class="fas fa-trash-alt"></i> Xóa tài khoản </a>
+                </div>
             </div>
-            <div class="dropdown-content">
-                <a href="/editProfile">Chỉnh sửa</a>
-                <a href="/viewProfile">Xem hồ sơ</a>
-                <a href="/logout">Đăng xuất</a>
-            </div>
-        </div>
+        </nav>
     </div>
         
     <div class="container">
@@ -55,14 +67,6 @@
         </div>
 
         
-    </div>
-
-    <div class="bottom-menu">
-        <button class="category-btn"><i class="fas fa-book"></i> Danh mục</button>
-        <button class="account-btn"><i class="fas fa-wallet"></i> Tài khoản</button>
-        <button class="analytics-btn"><i class="fas fa-chart-pie"></i> Phân tích</button>
-        <button class="budget-btn"><i class="fas fa-cash-register"></i> Ngân sách</button>
-        <button class="saving-goal-btn"><i class="fas fa-piggy-bank"></i> Mục tiêu tiết kiệm</button>
     </div>
 
     <button class="floating-btn"><i class="fas fa-pencil-alt"></i></button>

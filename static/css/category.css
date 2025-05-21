@@ -1,211 +1,339 @@
-body {
-  font-family: Arial, sans-serif;
+* {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
-  background-color: #fff;
 }
 
+body {
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, #ffe4ec, #e6f0fa);
+  min-height: 100vh;
+  padding: 20px;
+  color: #333;
+}
+
+/* Header */
 .header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  background-color: #ff7096;
+  background: linear-gradient(to right, #ff70a6, #ff99cc);
+  padding: 15px 20px;
+  border-radius: 15px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.back-button {
+  font-size: 24px;
   color: white;
-  padding: 10px 16px;
-}
-
-.header .back-button {
-  font-size: 20px;
   cursor: pointer;
+  transition: transform 0.3s ease, color 0.3s ease;
+  position: absolute;
+  left: 20px;
 }
 
-.header .title {
-  font-size: 18px;
-  font-weight: bold;
-  flex-grow: 1;
+.back-button:hover {
+  transform: scale(1.2);
+  color: #ffe4ec;
+}
+
+.title {
+  flex: 1;
   text-align: center;
 }
 
-.header .menu {
-  display: flex;
-  gap: 10px;
+.title h1 {
+  font-size: 24px;
+  color: white;
+  font-weight: 600;
+  margin: 0;
 }
 
-.header .menu-item {
-  font-size: 20px;
-}
-
+/* Tab Container */
 .tab-container {
   display: flex;
-  justify-content: space-around;
-  background-color: #ff9ab3;
-  padding: 10px 0;
+  justify-content: center;
+  gap: 15px;
+  margin: 20px 0;
 }
 
 .tab {
-  background-color: white;
-  border-radius: 20px;
+  background: #ffd3e0;
   border: none;
+  padding: 12px 20px;
+  border-radius: 25px;
   font-size: 16px;
-  padding: 6px 16px;
+  font-weight: 500;
+  color: #333;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
 }
 
-.tab.active {
-  background-color: #ff7096;
+.tab:hover {
+  background: #ff99cc;
   color: white;
 }
 
+.tab.active {
+  background: #ff70a6;
+  color: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.tab i {
+  font-size: 18px;
+}
+
+/* Category List */
 .category-list {
-  padding: 16px;
+  display: none;
+  background: white;
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 4px 15 faded rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+.category-list.active {
+  display: block;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .group-title {
-  font-size: 14px;
-  color: #888;
-  margin-bottom: 10px;
+  font-size: 18px;
+  font-weight: 600;
+  color: #ff70a6;
+  margin-bottom: 15px;
 }
 
 .category-item {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  padding: 8px;
-  border: 1px solid #eee;
-  margin-bottom: 6px;
-  border-radius: 8px;
-  gap: 10px;
+  align-items: center;
+  padding: 12px;
+  border-radius: 10px;
+  background: #f9f9f9;
+  margin-bottom: 10px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.category-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
 }
 
 .category-info {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
+}
+
+.category-info .icon {
+  font-size: 24px;
+  background: #ffe4ec;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ff70a6;
+}
+
+.category-info .text {
+  font-size: 16px;
+  font-weight: 500;
 }
 
 .category-actions {
   display: flex;
-  align-items: center;
   gap: 10px;
 }
 
-.menu-icon {
-  color: #ff7096;
-  font-size: 16px;
+.menu-icon, .delete-button {
   cursor: pointer;
+  font-size: 18px;
+  color: #ff70a6;
+  transition: color 0.3s ease;
 }
 
-.delete-button {
-  background: transparent; 
-  color: rgba(245, 5, 5, 0.652);
-  font-size: 20px; 
-  cursor: pointer;
-  border: none; 
-  padding: 4px; 
-  border-radius: 50%;
-  transition: color 0.3s ease, transform 0.2s ease; /* Thêm hiệu ứng chuyển động */
+.menu-icon:hover, .delete-button:hover {
+  color: #e55a8e;
 }
 
-.delete-button:hover {
-  color: rgb(242, 8, 8);
-  transform: scale(1.1); /* Tăng kích thước khi hover */
-}
-
-.delete-button i {
-  font-size: 20px; /* Điều chỉnh kích thước icon */
-}
-
+/* Add Button */
 .add-button {
-  display: flex;
-  justify-content: center; /* Căn giữa nội dung */
-  align-items: center; /* Căn giữa theo chiều dọc */
-  background-color: #ff7096;
-  color: white; 
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background: linear-gradient(45deg, #ff70a6, #ff99cc);
+  color: white;
+  padding: 15px 20px;
+  border-radius: 50px;
   font-size: 16px;
-  padding: 10px 20px; /* Khoảng cách xung quanh */
-  border-radius: 20px; /* Bo góc cho nút */
-  cursor: pointer; 
-  margin: 20px auto; 
-  width: fit-content;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease;
 }
 
 .add-button:hover {
-  background-color: #ff4d80; /* Màu nền khi hover */
+  transform: scale(1.1);
 }
 
+/* Modal */
 .category-form {
-  position: fixed; /* Đặt form ở vị trí cố định */
+  display: none;
+  position: fixed;
   top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5); /* Nền mờ */
-  display: none; /* Mặc định ẩn */
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
   justify-content: center;
   align-items: center;
-  z-index: 1000; /* Đảm bảo nó hiển thị trên các phần tử khác */
-  opacity: 0;
-  transform: scale(0.8); /* Ban đầu nhỏ hơn bình thường */
-  transition: opacity 0.3s ease, transform 0.3s ease; /* Thêm hiệu ứng khi xuất hiện */
+  z-index: 1000;
 }
-
 
 .modal-content {
-  background-color: white;
-  padding: 20px;
-  border-radius: 10px;
-  width: 300px;
-  text-align: center;
+  background: white;
+  padding: 25px;
+  border-radius: 15px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
   position: relative;
-  transform: scale(1);
-  display: flex;
-  flex-direction: column; /* Các trường nhập liệu và nút sẽ được căn theo cột */
-  gap: 16px;
+  animation: slideIn 0.3s ease;
 }
 
-/* Các input và button đều được căn chỉnh theo chiều dọc */
-.category-form input, .category-form select, .category-form button {
-  width: 100%; /* Chiếm toàn bộ chiều rộng của modal */
-  padding: 8px;
-  font-size: 14px;
-  border-radius: 5px;
-  border: 1px solid #ddd;
+@keyframes slideIn {
+  from { transform: translateY(-20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }
-
-.category-form input[type="text"] {
-  height: 35px; /* Căn chỉnh chiều cao input */
-}
-
 
 .close-modal {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 15px;
+  right: 15px;
   font-size: 24px;
+  color: #ff4d4d;
   cursor: pointer;
+  transition: color 0.3s ease;
 }
 
+.close-modal:hover {
+  color: #e63939;
+}
 
-#cancel-category {
-  margin-top: 10px;
-  background-color: #5b5155;
-  color: #ffffff;
+.modal-content h2 {
+  font-size: 20px;
+  color: #ff70a6;
+  margin-bottom: 20px;
+}
+
+.modal-content input, .modal-content select {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px;
+  border: 1px solid #ffd3e0;
+  border-radius: 10px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.modal-content input:focus, .modal-content select:focus {
+  border-color: #ff70a6;
+}
+
+.modal-content button {
+  width: 48%;
+  padding: 12px;
   border: none;
-  padding: 8px 16px;
-  border-radius: 5px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
   cursor: pointer;
+  transition: background 0.3s ease;
 }
-
 
 #submit-category {
-  margin-top: 10px;
-  background-color: #ff7096;
+  background: #ff70a6;
   color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 5px;
-  cursor: pointer;
 }
+
 #submit-category:hover {
-  background-color: #ff4d80;
+  background: #e55a8e;
+}
+
+#cancel-category {
+  background: #ffd3e0;
+  color: #333;
+}
+
+#cancel-category:hover {
+  background: #ff99cc;
+  color: white;
+}
+
+.category-info .icon {
+  font-size: 20px;
+  background: #ffe4ec;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ff70a6;
+  overflow: hidden;
+}
+
+.category-info .icon i {
+  font-size: 18px;
+  width: 100%;
+  text-align: center;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+  .header {
+    padding: 12px 15px;
+  }
+
+  .title h1 {
+    font-size: 20px;
+  }
+
+  .back-button {
+    left: 15px;
+  }
+
+  .tab-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .tab {
+    width: 80%;
+    justify-content: center;
+  }
+
+  .category-list {
+    padding: 15px;
+  }
+
+  .add-button {
+    bottom: 20px;
+    right: 20px;
+  }
 }

@@ -36,8 +36,7 @@
           {% for category in categories %}
             <button type="button" 
                     class="category-item {% if transaction and transaction.category_id == category.category_id %}selected{% endif %}" 
-                    data-category-id="{{ category.category_id }}"
-                    onclick="selectCategory(this)">
+                    data-category-id="{{ category.category_id }}">
               <span class="category-icon">{{ category.icon }}</span>
               <span class="category-name">{{ category.name }}</span>
             </button>
@@ -49,7 +48,6 @@
           {% for account in accounts %}
             <button type="button" 
                     data-account-id="{{ account.account_id }}" 
-                    onclick="selectAccount(this)"
                     class="{% if transaction and transaction.account_id == account.account_id %}selected{% endif %}">
               <span class="name">{{ account.account_name }}</span>
               <span class="balance">({{ account.balance }} đ)</span>
@@ -77,12 +75,6 @@
         <div class="submit-button">
           <button type="submit">{{ 'Cập nhật giao dịch' if transaction else 'Ghi nhận giao dịch' }}</button>
         </div>
-
-        {% if not transaction %}
-        <section class="recent-transactions">
-          <h2>Giao dịch gần đây</h2>
-        </section>
-        {% endif %}
       </div>
     </div>
   </form>

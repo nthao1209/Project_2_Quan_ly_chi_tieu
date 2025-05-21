@@ -3,64 +3,144 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ngân sách</title>
+  <title>Quản lý Ngân sách</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/budget.css') }}">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <script src="{{ url_for('static', filename='js/budget.js') }}" defer></script>
 </head>
 <body>
-  <div class="header">
-    <button class="back-button">←</button>
-    <script>
-      document.querySelector('.back-button').addEventListener('click', function () {
-        window.history.back();
-      });
-    </script>
-    
-    <h1>Ngân sách</h1>
-    <div class="refresh-icon" onclick="location.reload()">⟳</div>
-  </div>
+  <div class="container">
+    <div class="header">
+      <button class="back-button">
+        <i class="fas fa-arrow-left"></i>
+      </button>
+      <script>
+        document.querySelector('.back-button').addEventListener('click', function () {
+          window.location.href='/home';
+        });
+      </script>
+      
+      <h1>Quản lý Ngân sách</h1>
+      <button class="refresh-button" onclick="location.reload()">
+        <i class="fas fa-sync-alt"></i>
+      </button>
+    </div>
 
-  <div class="content active" id="monthly">
-    <h2>Thể loại</h2>
-    <div id="budget-list">
-      {% for budget in budgets %}
-        <div class="item" data-id="{{ budget.budget_id }}">
-          <span class="icon">{{ budget.category.icon }}</span>
-          <span>{{ budget.category.name }}</span>
-          <span class="amount">{{ "{:,.0f}".format(budget.limit_amount) }}</span>
-          <button class="delete-button">❌</button>
-          <button class="update-button">✏️</button>
-          
+    <div class="content active" id="monthly">
+      <div class="budget-section">
+        <h2><i class="fas fa-tags"></i> Danh mục ngân sách</h2>
+        <form id="month-form" method="get" action="/budgets">
+          <label for="month-select">Chọn tháng: </label>
+          <input type="month" id="month-select" name="month" value="{{ month }}">
+          <button type="submit">Xem</button>
+       </form>
 
-          <div class="budget-details" style="display: none; margin-top: 10px; font-size: 0.9em; color: #333;">
-            <div>Bắt đầu: {{ budget.start_date.strftime('%d/%m/%Y') }}</div>
-            <div>Kết thúc: {{ budget.end_date.strftime('%d/%m/%Y') }}</div>
-            <div>Giới hạn: {{ "{:,.0f}".format(budget.limit_amount) }} đ</div>
-          </div>
-        
-          <div class="update-form" style="display: none;">
-            <input type="number" class="update-amount" value="{{ budget.limit_amount }}">
-            <input type="date" class="update-start" value="{{ budget.start_date }}">
-            <input type="date" class="update-end" value="{{ budget.end_date }}">
-            <button class="confirm-update">Cập nhật</button>
-          </div>
+        <div id="budget-list" class="budget-list">
+          {% for budget in budgets %}
+            <div class="budget-item" data-id="{{ budget.budget_id }}">
+              <div class="budget-info">
+                <div class="category-icon">
+                  <span class="icon">{{ budget.category.icon }}</span>
+                </div>
+                <div class="category-details">
+                  <span class="category-name">{{ budget.category.name }}</span>
+                  <div class="progress-container">
+                    <div class="progress-bar {% if budget.percentage > 100 %}over-limit{% endif %}"
+                        style="width: {{ budget.percentage_width }}%;">
+                    </div>
+                  </div>
+                      <span>{{ budget.percentage }}%</span>
+                      {% if budget.percentage > 100 %}
+                          <p class="warning-text">⚠️ Bạn đã vượt quá ngân sách!</p>
+                      {% endif %}
+                </div>
+                <div class="budget-amount">
+                  {{ "{:,.0f}".format(budget.limit_amount) }} đ
+                </div>
+              </div>
+
+              <div class="budget-actions">
+                <button class="toggle-details"><i class="fas fa-chevron-down"></i></button>
+                <button class="update-button"><i class="fas fa-pencil-alt"></i></button>
+                <button class="delete-button"><i class="fas fa-trash"></i></button>
+              </div>
+
+              <div class="budget-details">
+                <div class="detail-row">
+                  <span><i class="far fa-calendar-alt"></i> Bắt đầu:</span>
+                  <span>{{ budget.start_date.strftime('%d/%m/%Y') }}</span>
+                </div>
+                <div class="detail-row">
+                  <span><i class="far fa-calendar-alt"></i> Kết thúc:</span>
+                  <span>{{ budget.end_date.strftime('%d/%m/%Y') }}</span>
+                </div>
+                <div class="detail-row">
+                  <span><i class="fas fa-wallet"></i> Giới hạn:</span>
+                  <span>{{ "{:,.0f}".format(budget.limit_amount) }} đ</span>
+                </div>
+              </div>
+            
+              <div class="update-form">
+                <div class="form-group">
+                  <label>Số tiền:</label>
+                  <input type="number" class="update-amount" value="{{ budget.limit_amount }}">
+                </div>
+                <div class="form-group">
+                  <label>Ngày bắt đầu:</label>
+                  <input type="date" class="update-start" value="{{ budget.start_date }}">
+                </div>
+                <div class="form-group">
+                  <label>Ngày kết thúc:</label>
+                  <input type="date" class="update-end" value="{{ budget.end_date }}">
+                </div>
+                <div class="form-actions">
+                  <button class="cancel-update">Hủy</button>
+                  <button class="confirm-update">Cập nhật</button>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
         </div>
-      {% endfor %}
-    </div>
+      </div>
 
-    <h3>Thêm ngân sách</h3>
-    <div class="add-budget">
-      <select id="new-category">
-        {% for cat in categories %}
-          <option value="{{ cat.category_id }}">{{ cat.name }}</option>
-        {% endfor %}
-      </select>
-      <input type="number" id="new-amount" placeholder="Số tiền">
-      <input type="date" id="start-date" placeholder="Ngày bắt đầu">
-      <input type="date" id="end-date" placeholder="Ngày kết thúc">
-      <button id="add-button">Thêm</button>
+      <div class="add-section">
+      <h3 id="toggle-add-form" style="cursor: pointer;">
+        <i class="fas fa-plus-circle"></i> Thêm ngân sách mới
+      </h3>
+        <div class="add-budget-form">
+          <div class="form-group">
+            <label for="new-category">Danh mục:</label>
+            <select id="new-category" class="form-control">
+              {% for cat in categories %}
+                <option value="{{ cat.category_id }}">{{ cat.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label for="new-amount">Số tiền (đ):</label>
+            <input type="number" id="new-amount" class="form-control" placeholder="Nhập số tiền">
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="start-date">Từ ngày:</label>
+              <input type="date" id="start-date" class="form-control">
+            </div>
+            <div class="form-group">
+              <label for="end-date">Đến ngày:</label>
+              <input type="date" id="end-date" class="form-control">
+            </div>
+          </div>
+          
+          <button id="add-button" class="btn-primary">
+            <i class="fas fa-plus"></i> Thêm ngân sách
+          </button>
+        </div>
+      </div>
     </div>
   </div>
-
+  
 </body>
 </html>

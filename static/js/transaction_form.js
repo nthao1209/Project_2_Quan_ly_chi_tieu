@@ -18,33 +18,36 @@ document.addEventListener('DOMContentLoaded', function() {
       
       todayInput.parentNode.appendChild(nowButton);
     }
-
+  
     // Initialize category selection
-    const categoryButtons = document.querySelectorAll('.category-item');
-    categoryButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            selectCategory(this);
-        });
-        
+        const categoryButtons = document.querySelectorAll('.category-item');
         const selectedCategoryId = document.getElementById('selectedCategory').value;
-        if (selectedCategoryId && button.dataset.categoryId === selectedCategoryId) {
-            button.classList.add('selected');
-        }
-    });
+
+        categoryButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                selectCategory(this);
+            });
+
+            if (selectedCategoryId && button.dataset.categoryId === selectedCategoryId) {
+                button.classList.add('selected');
+            }
+        });
 
     // Initialize account selection
-    const accountButtons = document.querySelectorAll('.account-grid button');
-    accountButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            selectAccount(this);
-        });
-        
+        const accountButtons = document.querySelectorAll('.account-grid button');
         const selectedAccountId = document.getElementById('selectedAccount').value;
-        if (selectedAccountId && button.dataset.accountId === selectedAccountId) {
-            button.classList.add('selected');
-            updateAccountIcon(button.querySelector('.name').textContent.trim());
-        }
-    });
+
+        accountButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                selectAccount(this);
+            });
+
+            if (selectedAccountId && button.dataset.accountId === selectedAccountId) {
+                button.classList.add('selected');
+                updateAccountIcon(button.querySelector('.name').textContent.trim());
+            }
+        });
+
 
     // Format currency on input
     const amountInput = document.querySelector('.amount-display');
@@ -90,20 +93,6 @@ document.addEventListener('DOMContentLoaded', function() {
         updateAccountIcon(button.querySelector('.name').textContent.trim());
     }
 
-    function updateAccountIcon(accountName) {
-        const accountIcon = document.querySelector('.account-icon');
-        if (accountIcon) {
-            if (accountName.includes('Tiền mặt')) {
-                accountIcon.textContent = '💵';
-            } else if (accountName.includes('Ngân hàng')) {
-                accountIcon.textContent = '🏦';
-            } else if (accountName.includes('Thẻ tín dụng')) {
-                accountIcon.textContent = '💳';
-            } else {
-                accountIcon.textContent = '💰';
-            }
-        }
-    }
 
     function handleFocus(e) {
         if (e.target.dataset.rawValue) {
@@ -145,6 +134,21 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
+        // Validate required fields with specific messages
+        if (!formData.get('category_id')) {
+            showErrorMessage('Vui lòng chọn danh mục');
+            return;
+        }
+        if (!formData.get('account_id')) {
+            showErrorMessage('Vui lòng chọn tài khoản');
+            return;
+        }
+        if (!formData.get('amount')) {
+            showErrorMessage('Vui lòng nhập số tiền');
+            return;
+        }
+
+
         // Validate date
         const dateInput = document.getElementById('todayInput');
         if (!dateInput.value && !isEdit) {
@@ -155,13 +159,6 @@ document.addEventListener('DOMContentLoaded', function() {
             formData.set('transaction_date', dateInput.value);
         }
         
-       console.log('Transaction date being sent:', dateInput.value);
-       console.log('FormData:', Object.fromEntries(formData)); // Log toàn bộ FormData
-       formData.set('transaction_date', dateInput.value);
-
-    // Lưu log vào sessionStorage để kiểm tra sau chuyển hướng
-        sessionStorage.setItem('lastTransactionFormData', JSON.stringify(Object.fromEntries(formData)));
-
         try {
             const response = await fetch(form.getAttribute('action'), {
                 method: 'POST',

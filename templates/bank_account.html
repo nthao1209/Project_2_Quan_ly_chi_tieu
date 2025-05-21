@@ -5,138 +5,88 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Quản lý tài khoản</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/bank_account.css') }}">
-  <script src="{{ url_for('static', filename='js/bank_account.js') }}"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body>
-  <div class="header">
-    <div class="back-button" onclick="window.history.back()">←</div>
-    <h1>Quản lý tài khoản</h1>
-  </div>
-
-  <!-- Danh Sách Tài Khoản -->
-  <div class="account-list">
-    <div class="account-item default-account">
-      <input type="checkbox" checked>
-      <img src="https://img.icons8.com/color/48/000000/bank-card-back-side.png" alt="card">
-      <span>Tài khoản mặc định</span>
+  <div class="container">
+    <div class="header">
+      <div class="back-button" onclick="window.location.href='/'">←</div>
+      <h1 class="header-title">Quản lý tài khoản</h1>
     </div>
-  </div>
 
-  <!-- Button Thêm Tài Khoản -->
-  <div class="add-button">
-    <button onclick="addAccount()">+ Thêm tài khoản</button>
-  </div>
-
-  <!-- Danh Sách Tài Khoản -->
-  <div class="account-list" id="accountList">
-    {% for account in accounts %}
-      <div class="account-item">
-        <img src="https://img.icons8.com/color/48/000000/bank-card-back-side.png" alt="card">
-        <div class="account-info">
-          <span>{{ account.account_name }} - {{ account.balance }} - {{ account.currency }}</span>
-          {% if account.is_default %}
-            <span class="default-label">(Mặc định)</span>
-          {% endif %}
-        </div>
-        <div class="account-actions">
-          <button class="edit-account-btn" onclick="showUpdateForm('{{account.account_id}}')">Cập nhật</button>
-          <button class="delete-account" data-account_id="{{ account.account_id }}">Xóa</button>
-          {% if not account.is_default %}
-            <button class="set-default" onclick="setAsDefault('{{ account.account_id }}')">Đặt làm mặc định</button>
-          {% endif %}
-        </div>
-      </div>
-    {% endfor %}
-  </div>
-
-  <!-- Modal Thêm Tài Khoản -->
-  <div id="add-account-modal" class="add-account-modal">
-    <h2>Thêm Tài Khoản</h2>
-    <input type="text" id="new_account_name" placeholder="Tên tài khoản" required>
-    <input type="number" id="new_balance" placeholder="Số dư" required>
-    <input type="text" id="new_currency" placeholder="Loại tiền tệ" required>
-    <div class="modal-actions">
-      <button onclick="saveNewAccount()">Lưu</button>
-      <button onclick="closeAddAccountModal()">Hủy</button>
+    
+    <div class="actions-container">
+      <button class="btn-add" onclick="addAccount()">+ Thêm tài khoản</button>
+      <button class="btn-add" onclick="window.location.href='/transfer/home'">Chuyển tiền</button>
     </div>
-  </div>
 
-  <!-- Overlay để làm mờ phần còn lại của màn hình -->
-  <div id="overlay" class="overlay"></div>
+    <!-- Danh Sách Tài Khoản -->
+    <div class="account-list" id="accountList">
+      {% for account in accounts %}
+        <div class="account-item">
+          <img src="https://img.icons8.com/color/48/000000/bank-card-back-side.png" alt="card" class="account-icon">
+          <div class="account-info">
+            <span class="account-details">{{ account.account_name }} - {{ "{:,.0f}".format(account.balance) }} - {{ account.currency }}</span>
+            {% if account.is_default %}
+              <span class="default-label">(Mặc định)</span>
+            {% endif %}
+          </div>
+          <div class="account-actions">
+            <button class="edit-account-btn" onclick="showUpdateForm('{{account.account_id}}')">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button class="delete-account" data-account_id="{{ account.account_id }}">
+              <i class="fas fa-trash-alt"></i>
+            </button>
+            {% if not account.is_default %}
+              <button class="set-default" onclick="setAsDefault('{{ account.account_id }}')">
+                <i class="fas fa-star"></i>
+              </button>
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
 
-  <!-- Form Cập Nhật Tài Khoản -->
-  <div id="update-account-form-container" class="form-modal" style="display: none;">
-    <div class="form-modal-content">
-      <form id="update-account-form">
-        <label for="account_name">Tên tài khoản:</label>
-        <input type="text" id="account_name" name="account_name" required>
-
-        <label for="currency">Loại tiền tệ:</label>
-        <input type="text" id="currency" name="currency" value="VND" required>
-
-        <label for="balance">Số dư:</label>
-        <input type="number" id="balance" name="balance" value="0" required>
-
-        <div class="form-actions">
-          <button type="submit">Cập nhật tài khoản</button>
-          <button type="button" id="cancel-update">Hủy</button>
+    <!-- Modal Thêm Tài Khoản -->
+    <div id="add-account-modal" class="add-account-modal">
+      <h2 class="modal-title">Thêm Tài Khoản</h2>
+      <form id="add-account-form" class="modal-form">
+        <label for="new_account_name" class="form-label">Tên tài khoản:</label>
+        <input type="text" id="new_account_name" placeholder="Tên tài khoản" required class="form-input">
+        <label for="new_balance" class="form-label">Số dư:</label>
+        <input type="number" id="new_balance" placeholder="Số dư" required class="form-input">
+        <label for="new_currency" class="form-label">Loại tiền tệ:</label>
+        <input type="text" id="new_currency" placeholder="Loại tiền tệ" required class="form-input">
+        <div class="modal-actions">
+          <button type="submit" class="btn-save">Thêm tài khoản</button>
+          <button type="button" class="btn-cancel" onclick="closeAddAccountModal()">Hủy</button>
         </div>
       </form>
     </div>
-  </div>
 
-  <script>
-    // Hiển thị modal thêm tài khoản
-    function addAccount() {
-      document.getElementById('add-account-modal').style.display = 'block';
-      document.getElementById('overlay').style.display = 'block'; // Hiển thị overlay
-    }
+    <!-- Overlay để làm mờ phần còn lại của màn hình -->
+    <div id="overlay" class="overlay"></div>
 
-    // Đóng modal thêm tài khoản
-    function closeAddAccountModal() {
-      document.getElementById('add-account-modal').style.display = 'none';
-      document.getElementById('overlay').style.display = 'none'; // Ẩn overlay
-    }
-
-    // Lưu tài khoản mới
-    function saveNewAccount() {
-      const accountName = document.getElementById('new_account_name').value;
-      const balance = document.getElementById('new_balance').value;
-      const currency = document.getElementById('new_currency').value;
-
-      if (!accountName.trim()) {
-        alert('Vui lòng nhập tên tài khoản');
-        return;
-      }
-
-      fetch('/bank_account/add', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          account_name: accountName,
-          balance: balance,
-          currency: currency
-        })
-      })
-      .then(res => res.json())
-      .then(data => {
-        if (data.message) {
-          alert('Thêm tài khoản thành công!');
-          location.reload(); // Reload lại trang
-        } else {
-          alert('Có lỗi xảy ra khi thêm tài khoản!');
-        }
-      })
-      .catch(error => {
-        console.error('Error:', error);
-        alert('Có lỗi xảy ra khi thêm tài khoản!');
-      });
-
-      closeAddAccountModal(); // Đóng form sau khi lưu thành công
-    }
-  </script>
+    <!-- Form Cập Nhật Tài Khoản -->
+    <div id="update-account-form-container" class="form-modal" style="display: none;">
+      <div class="form-modal-content">
+        <form id="update-account-form" class="modal-form">
+          <h2 class="modal-title">Cập nhật Tài Khoản</h2>
+          <label for="account_name" class="form-label">Tên tài khoản:</label>
+          <input type="text" id="account_name" name="account_name" required class="form-input">
+          <label for="currency" class="form-label">Loại tiền tệ:</label>
+          <input type="text" id="currency" name="currency" value="VND" required class="form-input">
+          <label for="balance" class="form-label">Số dư:</label>
+          <input type="number" id="balance" name="balance" value="0" required class="form-input">
+          <div class="form-actions">
+            <button type="submit" class="btn-save">Cập nhật tài khoản</button>
+            <button type="button" id="cancel-update" class="btn-cancel">Hủy</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  <script src="{{ url_for('static', filename='js/bank_account.js') }}"></script>
 
 </body>
 </html>

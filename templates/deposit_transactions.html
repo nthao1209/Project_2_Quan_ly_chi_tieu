@@ -38,7 +38,7 @@
                 <select id="from_account" name="from_account" required>
                     {% for account in accounts %}
                         <option value="{{ account.account_id }}">
-                            {{ account.account_name }} (Số dư: {{ account.balance|float }} VND)
+                            {{ account.account_name }} (Số dư: {{ "{:.0f}".format(account.balance) }} VND)
                         </option>
                     {% endfor %}
                 </select>

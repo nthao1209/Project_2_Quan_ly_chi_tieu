@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="vi">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/transfer_transactions.css') }}">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Chuyển tiền</title>
+</head>
+<body>
+  <div class="header">
+  <h2>Chuyển tiền giữa các tài khoản</h2>
+  <div class="back-button" id = "back">←</div>
+            <script>
+            document.getElementById('back').addEventListener('click', function () {
+                window.location.href = '/bank_account'; 
+            });
+            </script>
+  </div>
+  
+  <form id="transferForm">
+    <label for="from_account_id">Tài khoản gửi</label>
+    <select id="from_account_id" required></select>
+    <div id="from_balance" class="balance-display"></div>
+
+    <label for="to_account_id">Tài khoản nhận</label>
+    <select id="to_account_id" required></select>
+
+    <label for="amount">Số tiền</label>
+    <input type="number" id="amount" name="amount" step="0.01" required>
+
+    <label for="note">Ghi chú</label>
+    <textarea id="note" name="note"></textarea>
+
+    <button type="submit">Thực hiện chuyển tiền</button>
+  </form>
+
+  <div class="result" id="result"></div>
+
+  <script>
+    const form = document.getElementById('transferForm');
+    const result = document.getElementById('result');
+    const fromSelect = document.getElementById('from_account_id');
+    const toSelect = document.getElementById('to_account_id');
+    const fromBalanceDisplay = document.getElementById('from_balance');
+
+    let accounts = [];
+
+    async function fetchAccounts() {
+      const res = await fetch('/transfer/accounts');
+      const data = await res.json();
+      accounts = data.accounts || [];
+      updateAccountSelects();
+    }
+
+    function updateAccountSelects() {
+      fromSelect.innerHTML = '';
+      toSelect.innerHTML = '';
+      accounts.forEach(acc => {
+        const option1 = new Option(`${acc.account_name} `, acc.account_id);
+        const option2 = new Option(`${acc.account_name} `, acc.account_id);
+        fromSelect.add(option1);
+        toSelect.add(option2);
+      });
+      updateFromBalance();
+    }
+
+    function updateFromBalance() {
+      const fromId = parseInt(fromSelect.value);
+      const account = accounts.find(acc => acc.account_id === fromId);
+      if (account) {
+        fromBalanceDisplay.textContent = `Số dư: ${Number(account.balance).toLocaleString()} ${account.currency}`;
+      } else {
+        fromBalanceDisplay.textContent = '';
+      }
+    }
+
+    fromSelect.addEventListener('change', updateFromBalance);
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const from_account_id = parseInt(fromSelect.value);
+      const to_account_id = parseInt(toSelect.value);
+
+      if (from_account_id === to_account_id) {
+        result.textContent = 'Không thể chuyển cùng một tài khoản.';
+        result.className = 'result error';
+        return;
+      }
+
+      const amount = parseFloat(form.amount.value);
+      const note = form.note.value;
+
+      try {
+        const res = await fetch('/transfer', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ from_account_id, to_account_id, amount, note })
+        });
+        const data = await res.json();
+        result.textContent = res.ok ? data.message : data.error;
+        result.className = res.ok ? 'result success' : 'result error';
+
+        if (res.ok) {
+          await fetchAccounts(); // Cập nhật lại số dư
+        }
+      } catch (err) {
+        result.textContent = 'Lỗi kết nối đến máy chủ.';
+        result.className = 'result error';
+      }
+    });
+
+    // Tự động fetch tài khoản khi trang load
+    fetchAccounts();
+  </script>
+</body>
+</html>

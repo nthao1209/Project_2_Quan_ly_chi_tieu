@@ -5,6 +5,14 @@ document.addEventListener('DOMContentLoaded', function () {
   let expenseChart = null;
   let currentDate = new Date();
 
+  const floatingBtn = document.querySelector('.floating-btn');
+    if (floatingBtn) {
+        floatingBtn.addEventListener('click', e => {
+            e.preventDefault();
+            window.location.href = '/transactions/add_form';
+        });
+    }
+
   function updateMonthYear() {
     const month = currentDate.getMonth();
     const year = currentDate.getFullYear();
@@ -30,32 +38,26 @@ document.addEventListener('DOMContentLoaded', function () {
         'Accept': 'application/json'
       }
     })
-      .then(response => {
-        if (!response.ok) throw new Error('Không thể tải dữ liệu');
-        return response.json();
-      })
-      .then(data => {
-        const { total_amount, total_count, budget, percentage, remaining_budget } = data;
-        console.log('budget.limit_amount:', budget ? budget.limit_amount : 'Không có ngân sách');
+     .then(response => response.json())
+  .then(data => {
+    const { total_amount, total_count, budget, percentage, remaining_budget } = data;
+    console.log({ total_amount, total_count, budget, percentage, remaining_budget });
+    
+    function formatCurrency(amount) {
+      const roundedAmount = Math.round(parseFloat(amount));  // Chuyển thành số nguyên
+      return roundedAmount.toLocaleString('vi-VN') + ' đ';    // Định dạng theo kiểu Việt Nam
+    }
+    console.log('budget:', budget);
+    console.log('budget.limit_amount:', budget ? budget.limit_amount : 'budget is null/undefined');
 
-       function formatCurrency(amount) {
-  // Kiểm tra và làm tròn giá trị nếu cần
-  const roundedAmount = Math.round(parseFloat(amount));  // Chuyển thành số nguyên
-  return roundedAmount.toLocaleString('vi-VN') + ' đ';    // Định dạng theo kiểu Việt Nam
-}
-
-// Cập nhật nội dung trong HTML với định dạng tiền tệ
-document.querySelector('.quantity').innerHTML = `Số giao dịch: ${total_count}`;
-document.querySelector('.price').innerHTML = `Ngân sách: ${budget && budget.limit_amount ? formatCurrency(budget.limit_amount) : 'Chưa có'}`;
-document.querySelector('.total span:first-child').innerHTML = formatCurrency(total_amount);
-document.querySelector('.total span:nth-child(2)').innerHTML = `${percentage.toFixed(2)}%`;
-document.querySelector('.total span:last-child').innerHTML = formatCurrency(remaining_budget);
-
-     
-        })
-        .catch(error => {
-          console.error('Lỗi khi cập nhật dữ liệu:', error);
-        });
+    
+    const summaryValues = document.querySelectorAll('.summary-item .value');
+    summaryValues[0].innerText = total_count;
+    summaryValues[1].innerText = budget && budget.limit_amount ? formatCurrency(budget.limit_amount) : 'Chưa có';
+    summaryValues[2].innerText = formatCurrency(total_amount);
+    summaryValues[3].innerText = `${percentage.toFixed(2)}%`;
+    summaryValues[4].innerText = formatCurrency(remaining_budget);
+  });
   }
 
   function fetchAnalyticsData(month, year, type = 'expense') {
@@ -136,7 +138,7 @@ document.querySelector('.total span:last-child').innerHTML = formatCurrency(rema
             detail.innerHTML = `
               <span class="detail-icon">${item.icon || '📊'}</span>
               <div class="detail-text">
-                <span class="detail-name">${item.category}</span>
+                <span class="detail-name">${item.category}</span> 
                 <span class="detail-percent">${percentages[index]}%</span>
                 <span class="detail-amount">${item.total.toLocaleString('vi-VN')} đ</span>
               </div>

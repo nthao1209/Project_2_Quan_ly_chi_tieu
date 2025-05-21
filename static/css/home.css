@@ -1,68 +1,94 @@
 /* General Styles */
-body {
-    font-family: Arial, sans-serif;
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+* {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
-    background: #ffe4ec;
+}
+
+body {
+    font-family: 'Poppins', Arial, sans-serif;
+    background: linear-gradient(135deg, #ffe4ec, #f4f7ff); /* Gradient background */
+    color: #333;
     text-align: center;
+    min-height: 100vh;
+    padding-bottom: 80px; /* Prevent content overlap with bottom menu */
 }
 
 /* Header */
 .header {
-    background: #ff70a6;
+    background: linear-gradient(to right, #ff70a6, #ff99cc); /* Gradient for header */
     color: white;
-    padding: 15px;
+    padding: 12px 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 18px;
+    position: fixed;
+    top: 0;
+    width: 100%;
     z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-/* Nút hóa đơn */
+/* Invoice Button */
 .invoice-btn {
     background: white;
     border: none;
     color: #ff70a6;
-    padding: 5px 15px;
-    border-radius: 20px;
-    font-weight: bold;
+    padding: 8px 20px;
+    border-radius: 25px;
+    font-weight: 600;
     cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.invoice-btn:hover {
+    background: #ffe4ec;
+    transform: scale(1.05);
 }
 
 /* Summary Box */
 .summary-box {
     background: white;
-    margin: 10px auto;
+    margin: 80px auto 20px; /* Account for fixed header */
     width: 90%;
-    border-radius: 15px;
-    padding: 15px;
+    max-width: 600px;
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 .date-picker {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 10px;
+    gap: 15px;
     font-size: 16px;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
 }
 
 .month-nav {
     cursor: pointer;
-    font-size: 18px;
+    font-size: 20px;
+    color: #ff70a6;
+    transition: color 0.3s ease;
+}
+
+.month-nav:hover {
+    color: #e55a8e;
 }
 
 #currentMonthYear {
     font-size: 18px;
-    font-weight: bold;
+    font-weight: 600;
     color: #333;
 }
 
 .summary-content {
     display: flex;
     justify-content: space-around;
-    padding: 10px 0;
+    padding: 15px 0;
 }
 
 .summary-item {
@@ -70,8 +96,8 @@ body {
 }
 
 .amount {
-    font-size: 20px;
-    font-weight: bold;
+    font-size: 22px;
+    font-weight: 700;
     color: #ff70a6;
 }
 
@@ -79,17 +105,24 @@ body {
 .filter-buttons {
     display: flex;
     justify-content: center;
-    gap: 10px;
-    margin: 10px 0;
+    gap: 12px;
+    margin: 15px 0;
 }
 
 .filter-buttons button {
     border: none;
-    padding: 5px 10px;
+    padding: 8px 15px;
     background: #ffd3e0;
-    border-radius: 15px;
+    border-radius: 20px;
     cursor: pointer;
     font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.filter-buttons button:hover {
+    background: #ff99cc;
+    color: white;
 }
 
 .filter-buttons .active {
@@ -99,27 +132,27 @@ body {
 
 /* Recent Transactions */
 .recent-transactions {
+    margin: 20px 0;
+    padding: 0 15px 100px; /* Extra padding for bottom menu */
     display: flex;
     flex-direction: column;
-    gap: 16px;
-    margin-top: 20px;
-    padding: 0 12px 100px; /* padding-bottom tránh đè bottom menu */
+    gap: 15px;
 }
 
-/* Mỗi giao dịch */
 .recent-transaction-box {
-    background-color: #fff;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    padding: 16px;
+    background: white;
+    border-radius: 15px;
+    padding: 15px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    transition: transform 0.2s ease;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .recent-transaction-box:hover {
-    transform: scale(1.01);
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.12);
 }
 
 .transaction-category {
@@ -130,19 +163,18 @@ body {
 
 .category-icon {
     font-size: 24px;
-    background-color: #f2f2f2;
+    background: #f5f5f5;
     border-radius: 50%;
-    width: 36px;
-    height: 36px;
+    width: 40px;
+    height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-/* Số tiền */
 .transaction-amount {
     font-size: 18px;
-    font-weight: bold;
+    font-weight: 600;
 }
 
 .transaction-amount.income {
@@ -153,12 +185,11 @@ body {
     color: #e74c3c;
 }
 
-/* Không có giao dịch */
 .no-transactions {
-    text-align: center;
     color: #999;
     font-style: italic;
-    margin-top: 20px;
+    margin: 30px 0;
+    font-size: 16px;
 }
 
 /* Bottom Navigation */
@@ -166,60 +197,69 @@ body {
     display: flex;
     justify-content: space-around;
     background: white;
-    padding: 15px 0;
+    padding: 12px 0;
     position: fixed;
     bottom: 0;
     width: 100%;
-    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
     z-index: 999;
 }
 
 .bottom-menu button {
     border: none;
     background: none;
-    font-size: 14px;
+    font-size: 13px;
     color: #ff70a6;
     cursor: pointer;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 5px;
+    gap: 4px;
+    transition: color 0.3s ease;
+}
+
+.bottom-menu button:hover {
+    color: #e55a8e;
 }
 
 .bottom-menu button i {
-    font-size: 20px;
+    font-size: 22px;
     color: #ff70a6;
 }
 
 /* Floating Button */
 .floating-btn {
     position: fixed;
-    bottom: 80px; /* nâng lên tránh đè bottom-menu */
+    bottom: 90px; /* Adjusted to avoid overlap with bottom menu */
     right: 20px;
-    background: #ff70a6;
+    background: linear-gradient(45deg, #ff70a6, #ff99cc);
     border: none;
     color: white;
     padding: 15px;
     border-radius: 50%;
-    font-size: 18px;
+    font-size: 20px;
     cursor: pointer;
-    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     z-index: 1000;
+    transition: transform 0.3s ease;
+}
+
+.floating-btn:hover {
+    transform: scale(1.1);
 }
 
 /* Avatar */
 .avatar-container {
     position: relative;
-    display: inline-block;
 }
 
 .avatar-wrapper {
-    width: 50px;
-    height: 50px;
+    width: 45px;
+    height: 45px;
     border-radius: 50%;
     overflow: hidden;
     border: 2px solid #ff99cc;
-    background-color: #ffcce5;
+    background: #ffcce5;
     cursor: pointer;
 }
 
@@ -235,88 +275,186 @@ body {
     position: absolute;
     top: 100%;
     right: 0;
-    background-color: white;
-    min-width: 120px;
-    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
-    z-index: 1;
-    border-radius: 8px;
+    background: white;
+    min-width: 140px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    z-index: 1001;
+    border-radius: 10px;
     overflow: hidden;
 }
 
 .dropdown-content a {
-    color: black;
+    color: #333;
     padding: 12px 16px;
     text-decoration: none;
-    display: block;
+    display: flex;       /* để icon và text nằm cùng hàng */
+    align-items: center; /* canh giữa theo chiều dọc */
+    font-size: 14px;
+    gap: 8px;            /* khoảng cách giữa icon và chữ */
+
 }
 
 .dropdown-content a:hover {
-    background-color: #f1f1f1;
+    background: #ffe4ec;
 }
-
-/* Thông báo lỗi */
+/* Error Notification */
 .error-notification {
     position: fixed;
     top: 20px;
     right: 20px;
-    background-color: #e74c3c;
+    background: #e74c3c;
     color: white;
     padding: 12px 20px;
-    border-radius: 6px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-    z-index: 1000;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    z-index: 1002;
+    animation: slideIn 0.3s ease;
 }
 
-/* Đảm bảo body không bị cuộn khi modal hiển thị */
+@keyframes slideIn {
+    from { transform: translateX(100%); }
+   infinite { transform: translateX(0); }
+}
+
+/* Modal */
 body.modal-open {
     overflow: hidden;
 }
 
-/* Overlay phủ toàn màn hình */
 .modal-overlay {
-    position: fixed; /* Vị trí cố định để phủ toàn trang */
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.5); /* Nền mờ */
+    background: rgba(0, 0, 0, 0.6);
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1000; /* Đảm bảo modal nằm trên các phần tử khác */
+    z-index: 1000;
 }
 
-/* Định dạng cho modal */
 .transaction-detail-modal {
-    background: #ffe6f0; /* Màu nền giống trong ảnh */
-    padding: 20px;
-    border-radius: 10px;
-    width: 300px;
-    text-align: center;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Thêm bóng cho modal */
+    background: #fff;
+    padding: 25px;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 350px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
 }
 
-/* Nút đóng */
 .close-btn {
     float: right;
     cursor: pointer;
-    font-size: 24px;
-    color: #ff4d4d; /* Màu nút đóng giống trong ảnh */
+    font-size: 20px;
+    color: #ff4d4d;
+    transition: color 0.3s ease;
 }
 
-/* Nội dung bên trong modal */
+.close-btn:hover {
+    color: #e63939;
+}
+
 .modal-content p {
-    margin: 5px 0;
+    margin: 8px 0;
     font-size: 14px;
+    color: #333;
 }
 
-/* Đảm bảo biểu tượng và tiêu đề được định dạng đúng */
-.category-icon {
-    font-size: 24px;
-    margin-bottom: 10px;
+/* Navbar */
+.navbar {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background: linear-gradient(to right, #ffffff, #ffffff); 
+    padding: 12px 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    border-radius: 0 0 10px 10px; /* Rounded bottom corners */
+    transition: transform 0.3s ease;
 }
 
-h3 {
-    margin: 10px 0;
-    font-size: 18px;
+.nav-btn {
+    background: none;
+    border: none;
+    padding: 10px 15px;
+    font-size: 14px;
+    color: #333;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.nav-btn:hover {
+    background: #ffe4ec;
+    color: #ff70a6;
+}
+
+.nav-btn i {
+    margin-right: 6px;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+    .header {
+        padding: 10px 15px;
+    }
+
+    .summary-box {
+        width: 95%;
+        margin-top: 70px;
+    }
+
+    .summary-content {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .filter-buttons {
+        flex-wrap: wrap;
+    }
+
+    .recent-transaction-box {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+    }
+
+    .floating-btn {
+    position: fixed;
+    bottom: 80px; /* Tăng khoảng cách từ bottom menu */
+    right: 20px;
+    background: linear-gradient(45deg, #ff70a6, #ff99cc);
+    border: none;
+    color: white;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    font-size: 20px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    transition: transform 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.floating-btn:hover {
+    transform: scale(1.1);
+}
+}
+.transaction-date-group {
+    margin-bottom: 20px;
+}
+
+.transaction-date-title {
+    font-weight: bold;
+    font-size: 16px;
+    margin: 12px 0;
+    color: #333;
 }

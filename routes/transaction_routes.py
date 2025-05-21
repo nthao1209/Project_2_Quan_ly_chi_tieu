@@ -32,6 +32,7 @@ def get_budget_for_month(user_id, category_id, month, year):
             Budget.start_date <= end_date,
             Budget.end_date >= start_date
         ).first()
+
         return budget
     except ValueError as e:
         raise ValueError(f"Lỗi xác định ngân sách: {str(e)}")
@@ -44,37 +45,34 @@ def extract_transaction_date(form):
     date_str = form.get('transaction_date')
     transaction_date = None
 
-    print(f"Raw form data: {dict(form)}")  # Log toàn bộ form data
+    # Kiểm tra và parse ngày giao dịch
     if date_str:
         date_str = date_str.strip()
-        print(f"Received transaction_date: {date_str}")
         try:
-            # Ưu tiên định dạng datetime-local với giây
             transaction_date = datetime.strptime(date_str, '%Y-%m-%dT%H:%M:%S')
-            print(f"Parsed transaction_date: {transaction_date}")
         except ValueError:
             try:
-                # Thử định dạng không có giây
                 transaction_date = datetime.strptime(date_str, '%Y-%m-%dT%H:%M')
-                print(f"Parsed transaction_date: {transaction_date}")
             except ValueError:
                 try:
-                    # Chỉ có ngày
                     transaction_date = datetime.strptime(date_str, '%Y-%m-%d')
                     transaction_date = transaction_date.replace(
                         hour=datetime.now().hour,
                         minute=datetime.now().minute,
                         second=datetime.now().second
                     )
-                    print(f"Parsed transaction_date (date only): {transaction_date}")
                 except ValueError:
-                    print(f"Invalid date format: {date_str}")
-                    raise ValueError('Ngày giao dịch không hợp lệ. Vui lòng sử dụng định dạng YYYY-MM-DDTHH:MM:SS hoặc YYYY-MM-DDTHH:MM.')
+                    raise ValueError('Ngày giao dịch không hợp lệ.')
     else:
-        print("No transaction_date provided, using current datetime")
         transaction_date = datetime.now()
-        print(f"Using default transaction_date: {transaction_date}")
 
+    # Kiểm tra category
+    category_id = int(form.get('category_id'))
+    category = Category.query.filter_by(category_id=category_id, user_id=user_id).first()
+    if not category:
+        raise ValueError('Danh mục không hợp lệ hoặc không thuộc về bạn.')
+
+    # Kiểm tra account
     raw_account_id = form.get('account_id')
     if raw_account_id:
         account = Account.query.filter_by(account_id=raw_account_id, user_id=user_id).first()
@@ -87,6 +85,7 @@ def extract_transaction_date(form):
             raise ValueError('Không tìm thấy tài khoản mặc định.')
         account_id = default_account.account_id
 
+
     transaction_type_map = {
         'Thu nhập': 'income',
         'Chi tiêu': 'expense',
@@ -94,13 +93,14 @@ def extract_transaction_date(form):
 
     raw_type = form.get('transaction_type')
     transaction_type = transaction_type_map.get(raw_type)
+
     if not transaction_type:
         raise ValueError('Loại giao dịch không hợp lệ.')
    
     return {
         'user_id': user_id,
         'account_id': account_id,
-        'category_id': int(form.get('category_id')),
+        'category_id': category_id,
         'amount': Decimal(form.get('amount')),
         'transaction_type': transaction_type,
         'transaction_date': transaction_date,
@@ -110,13 +110,14 @@ def extract_transaction_date(form):
 def calculate_budget(user_id, category_id, transaction_date):
     if not user_id or not category_id or not isinstance(transaction_date, datetime):
         raise ValueError("Dữ liệu đầu vào không hợp lệ")
+    
     budget = Budget.query.filter(
         Budget.user_id == user_id,
         Budget.category_id == category_id,
         Budget.start_date <= transaction_date,
         Budget.end_date >= transaction_date
     ).first()
-    
+
     if not budget:
         return None
     
@@ -134,41 +135,44 @@ def calculate_budget(user_id, category_id, transaction_date):
         'budget': budget,
         'amount_spent': total_amount,
         'remaining': budget.limit_amount - total_amount,
-        'percentage': (total_amount / budget.limit_amount) * 100 if budget.limit_amount > 0 else 0
+        'percentage': float(total_amount) / float(budget.limit_amount) * 100
     }
 
 @transaction_bp.route('/transactions', methods=['GET'])
 def all_transactions():
+    user_id = session.get('user_id')
+    if not user_id:
+        return redirect(url_for('login.login'))
+
+    # Lấy các tham số từ request
     category_id = request.args.get('category_id')
     month = request.args.get('month')
     year = request.args.get('year')
     account_id = request.args.get('account_id')
-    user_id = session.get('user_id')
-    
-    if not user_id:
-        return redirect(url_for('login.login'))
+    transaction_type = request.args.get('transaction_type')
 
+    # Query cơ bản
     query = Transaction.query.filter_by(user_id=user_id)
     accounts = Account.query.filter_by(user_id=user_id).all()
-    transaction_type = request.args.get('transaction_type')
     category = None
 
+    # Filter theo category
     if category_id:
-        category = Category.query.get(category_id)
+        category = Category.query.filter_by(category_id=category_id, user_id=user_id).first()
         if category:
-            type_map = {
-                'Chi tiêu': 'expense',
-                'Thu nhập': 'income'
-            }
-            transaction_type = type_map.get(category.type, 'expense') if not transaction_type else transaction_type
+            transaction_type = vi_to_type.get(category.type, 'expense') if not transaction_type else transaction_type
             query = query.filter_by(category_id=category_id)
         
     if transaction_type not in ['expense', 'income']:
         transaction_type = 'expense'
 
+    # Filter theo account
     if account_id and account_id != 'all':
-        query = query.filter_by(account_id=account_id)
+        account = Account.query.filter_by(account_id=account_id, user_id=user_id).first()
+        if account:
+            query = query.filter_by(account_id=account_id)
 
+    # Filter theo tháng/năm
     if month:
         try:
             month = int(month)
@@ -187,9 +191,9 @@ def all_transactions():
     total_count = len(filtered_transactions)
     total_amount = sum(t.amount for t in filtered_transactions) or 0
 
+    # Tính toán budget
     budget_info = None
     if category_id:
-        # Sử dụng ngày hiện tại nếu không có giao dịch hoặc lấy ngày từ giao dịch đầu tiên
         now = datetime.now()
         transaction_date = filtered_transactions[0].transaction_date if filtered_transactions else datetime(year or now.year, month or now.month, 15)
         budget_info = calculate_budget(user_id=user_id, category_id=category_id, transaction_date=transaction_date)
@@ -215,7 +219,6 @@ def all_transactions():
             } for t in filtered_transactions]
         })
     
-    
     return render_template('transaction.html',
                            transactions=filtered_transactions,
                            category=category,
@@ -237,19 +240,33 @@ def add_transaction():
     if request.method == 'POST':
         try:
             data = extract_transaction_date(request.form)
-            print(f"Transaction data before save: {data}")
+            
+            # Thêm kiểm tra bổ sung
+            category = Category.query.filter_by(
+                category_id=data['category_id'], 
+                user_id=user_id
+            ).first()
+            if not category:
+                raise ValueError('Danh mục không hợp lệ')
+                
+            account = Account.query.filter_by(
+                account_id=data['account_id'], 
+                user_id=user_id
+            ).first()
+            if not account:
+                raise ValueError('Tài khoản không hợp lệ')
+            
+            if data['transaction_type'] == 'income':
+                account.balance += data['amount']
+            elif data['transaction_type'] == 'expense':
+                account.balance -= data['amount']
+
             new_transaction = Transaction(**data)
             db.session.add(new_transaction)
             db.session.commit()
             
-            # Kiểm tra dữ liệu sau khi lưu
-            saved_transaction = Transaction.query.get(new_transaction.transaction_id)
-            print(f"Saved transaction: {saved_transaction.transaction_date}")  # Log ngày đã lưu
-            # Cập nhật ngân sách sau khi thêm giao dịch
+            # Cập nhật ngân sách
             budget_info = calculate_budget(data['user_id'], data['category_id'], data['transaction_date'])
-
-            category = Category.query.get(data['category_id'])
-            account = Account.query.get(data['account_id'])
 
             if request.headers.get('Accept') == 'application/json':
                 return jsonify({
@@ -258,9 +275,9 @@ def add_transaction():
                     'transaction': {
                         'transaction_id': new_transaction.transaction_id,
                         'category_id': new_transaction.category_id,
-                        'category_name': category.name if category else '',
+                        'category_name': category.name,
                         'account_id': new_transaction.account_id,
-                        'account_name': account.account_name if account else '',
+                        'account_name': account.account_name,
                         'amount': str(new_transaction.amount),
                         'type': new_transaction.transaction_type,
                         'transaction_date': new_transaction.transaction_date.strftime('%Y-%m-%d'),
@@ -282,25 +299,33 @@ def add_transaction():
                     'success': False,
                     'message': str(e)
                 }), 400
-            flash('Ghi nhận thất bại')
+            flash('Ghi nhận thất bại: ' + str(e))
             return redirect(url_for('home.home'))
     
     return redirect(url_for('home.home'))
 
 @transaction_bp.route('/transactions/delete/<int:transaction_id>', methods=['POST'])
 def delete_transaction(transaction_id):
-    transaction = Transaction.query.get_or_404(transaction_id)
+    user_id = session.get('user_id')
+    if not user_id:
+        return redirect(url_for('login.login'))
+
+    transaction = Transaction.query.filter_by(transaction_id=transaction_id, user_id=user_id).first()
+    if not transaction:
+        flash('Giao dịch không tồn tại hoặc bạn không có quyền xóa')
+        return redirect(url_for('home.home'))
+
     category_id = transaction.category_id
     try:
         db.session.delete(transaction)
         db.session.commit()
-        # Cập nhật ngân sách sau khi xóa giao dịch
-        calculate_budget(transaction.user_id, category_id, transaction.transaction_date)
+        calculate_budget(user_id, category_id, transaction.transaction_date)
         flash('Xóa thành công')
     except Exception as e:
         db.session.rollback()
-        flash('Xóa thất bại')
+        flash('Xóa thất bại: ' + str(e))
     return redirect(url_for('transaction.all_transactions', category_id=category_id))
+
 @transaction_bp.route('/transactions/add_form', methods=['GET'])
 def add_transaction_form():
     user_id = session.get('user_id')
@@ -308,8 +333,7 @@ def add_transaction_form():
         return redirect(url_for('login.login'))
 
     accounts = Account.query.filter_by(user_id=user_id).all()
-    categories = Category.query.filter(
-        (Category.user_id == user_id) | (Category.user_id == None)).all()
+    categories = Category.query.filter_by(user_id=user_id).all()
     return render_template('transaction_form.html', accounts=accounts, categories=categories)
 
 @transaction_bp.route('/transactions/recent', methods=['GET'])
@@ -344,7 +368,7 @@ def recent_transactions():
         'transaction_id': t.transaction_id,
         'category_id': t.category_id,
         'category_name': t.category.name,
-        'icon' : t.category.icon,
+        'icon': t.category.icon,
         'account_id': t.account_id,
         'account_name': t.account.account_name,
         'amount': str(t.amount),
@@ -356,32 +380,33 @@ def recent_transactions():
 
 @transaction_bp.route('/transactions/edit/<int:transaction_id>', methods=['GET', 'POST'])
 def edit_transaction(transaction_id):
-    # Kiểm tra user_id
     user_id = session.get('user_id')
     if not user_id:
         flash('Vui lòng đăng nhập để chỉnh sửa giao dịch')
         return redirect(url_for('login.login'))
 
-    # Truy vấn giao dịch với user_id
     transaction = Transaction.query.filter_by(transaction_id=transaction_id, user_id=user_id).first()
     if not transaction:
-        print(f"Transaction ID {transaction_id} not found for user_id {user_id}")
         flash('Giao dịch không tồn tại hoặc bạn không có quyền chỉnh sửa')
         return redirect(url_for('home.home'))
 
-    categories = Category.query.all()
-    accounts = Account.query.all()
+    categories = Category.query.filter_by(user_id=user_id).all()
+    accounts = Account.query.filter_by(user_id=user_id).all()
 
     if request.method == 'POST':
         try:
-            # Log form data
-            print(f"Form data: {dict(request.form)}")
-            
-            # Sử dụng extract_transaction_date để xử lý form data
             data = extract_transaction_date(request.form)
-            print(f"Parsed data: {data}")
+            
+            # Kiểm tra category và account thuộc về user
+            category = Category.query.filter_by(category_id=data['category_id'], user_id=user_id).first()
+            if not category:
+                raise ValueError('Danh mục không hợp lệ')
+                
+            account = Account.query.filter_by(account_id=data['account_id'], user_id=user_id).first()
+            if not account:
+                raise ValueError('Tài khoản không hợp lệ')
 
-            # Cập nhật các trường của giao dịch
+            # Cập nhật transaction
             transaction.amount = data['amount']
             transaction.note = data['note']
             transaction.transaction_type = data['transaction_type']
@@ -390,32 +415,41 @@ def edit_transaction(transaction_id):
             transaction.transaction_date = data['transaction_date']
 
             db.session.commit()
-            print(f"Saved transaction: ID={transaction.transaction_id}, Date={transaction.transaction_date}")
 
             # Cập nhật ngân sách
-            calculate_budget(transaction.user_id, transaction.category_id, transaction.transaction_date)
+            calculate_budget(user_id, data['category_id'], data['transaction_date'])
 
             if request.headers.get('Accept') == 'application/json':
-                return jsonify({'success': True, 'message': 'Cập nhật thành công!'})
+                return jsonify({
+                    'success': True, 
+                    'message': 'Cập nhật thành công!',
+                    'transaction': {
+                        'transaction_id': transaction.transaction_id,
+                        'category_id': transaction.category_id,
+                        'account_id': transaction.account_id,
+                        'amount': str(transaction.amount),
+                        'type': transaction.transaction_type,
+                        'transaction_date': transaction.transaction_date.strftime('%Y-%m-%d'),
+                        'note': transaction.note or ''
+                    }
+                })
 
             flash('Cập nhật thành công!')
             return redirect(url_for('home.home'))
         except ValueError as e:
             db.session.rollback()
-            print(f"ValueError in edit_transaction: {e}")
             if request.headers.get('Accept') == 'application/json':
                 return jsonify({'success': False, 'message': str(e)}), 400
             flash(f'Cập nhật thất bại: {str(e)}')
             return redirect(url_for('home.home'))
         except Exception as e:
             db.session.rollback()
-            print(f"Unexpected error in edit_transaction: {e}")
             if request.headers.get('Accept') == 'application/json':
                 return jsonify({'success': False, 'message': 'Có lỗi xảy ra khi chỉnh sửa giao dịch'}), 500
             flash('Cập nhật thất bại')
             return redirect(url_for('home.home'))
 
     return render_template('transaction_form.html',
-                           transaction=transaction,
-                           categories=categories,
-                           accounts=accounts)
+                         transaction=transaction,
+                         categories=categories,
+                         accounts=accounts)

@@ -1,140 +1,248 @@
 /* Reset cơ bản */
 body {
-    font-family: 'Segoe UI', sans-serif;
-    background-color: #fff7fa; /* hồng pastel nền */
-    color: #444;
-    margin: 0;
-    padding: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, #fff7fa, #ffebf2);
+  color: #444;
+  margin: 0;
+  padding: 0;
+  line-height: 1.6;
+  font-size: 16px;
+  overflow-x: hidden;
 }
 
+/* Container */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 15px;
+}
+
+/* Header */
 .analytics-header {
-    background-color: #f16a97;
-    padding: 20px 16px;
-    border-bottom: 1px solid #f7cad0;
-    box-shadow: 0 4px 8px rgba(253, 203, 211, 0.2);
-    border-radius: 0 0 16px 16px;
+  background: linear-gradient(90deg, #ff70a6, #ff99bb);
+  padding: 20px 16px;
+  border-bottom: 2px solid #ffc1d3;
+  box-shadow: 0 4px 15px rgba(255, 112, 166, 0.4);
+  border-radius: 0 0 16px 16px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.analytics-header:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(255, 112, 166, 0.6);
 }
 
 .header-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .back-button {
-    font-size: 40px;
-    cursor: pointer;
-    color: #ffffff;
-    transition: all 0.2s;
-    flex: 0 0 auto; /* không cho co giãn */
+  font-size: 40px;
+  cursor: pointer;
+  color: #ffffff;
+  transition: transform 0.3s ease, color 0.3s ease;
+  flex: 0 0 auto;
+}
+
+.back-button:hover {
+  transform: scale(1.15);
+  color: #fff5f8;
 }
 
 h1 {
-    flex: 1;
-    text-align: center;
-    margin: 0;
-    font-size: 30px;
-    color: #ffffff;
+  flex: 1;
+  text-align: center;
+  margin: 0;
+  font-size: 30px;
+  color: #ffffff;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: color 0.3s ease;
+}
+
+.analytics-header:hover h1 {
+  color: #fff0f5;
 }
 
 .date-picker {
-    font-size: 16px;
-    color: #ffffff;
-    flex: 0 0 auto;
-    display: flex;
-    align-items: center;
+  font-size: 16px;
+  color: #ffffff;
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
 }
 
 .month-nav {
-    cursor: pointer;
-    padding: 0 10px;
-    font-weight: bold;
-    font-size: 18px;
-    color: #ffffff;
-    transition: color 0.2s;
+  cursor: pointer;
+  padding: 0 10px;
+  font-weight: bold;
+  font-size: 18px;
+  color: #ffffff;
+  transition: color 0.2s;
 }
+
 .month-nav:hover {
-    color: #dc759c;
+  color: #ff99bb;
 }
 
 /* Tabs */
 .chart-tabs {
-    margin-top: 20px;
-    display: flex;
-    justify-content: center;
-    gap: 8px;
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
 }
 
 .chart-tab {
-    background-color: #fbe0ea;
-    border: none;
-    color: #d63384;
-    padding: 8px 18px;
-    border-radius: 24px;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 500;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 4px rgba(240, 110, 170, 0.1);
+  background-color: #ffebf2;
+  border: none;
+  color: #ff70a6;
+  padding: 8px 18px;
+  border-radius: 24px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(255, 112, 166, 0.1);
 }
+
 .chart-tab:hover {
-    background-color: #f7c6d9;
+  background-color: #ffdbe6;
 }
+
 .chart-tab.active {
-    background-color: #d63384;
-    color: white;
+  background-color: #ff70a6;
+  color: #ffffff;
 }
 
 /* Biểu đồ */
 canvas#expenseChart {
-    display: block;
-    margin: 30px auto 20px auto;
-    max-width: 92%;
+  display: block;
+  margin: 30px auto 20px auto;
+  max-width: 92%;
 }
 
 /* Chi tiết */
 .details-container {
-    max-width: 600px;
-    margin: 0 auto 40px auto;
-    background-color: #fff;
-    border-radius: 16px;
-    padding: 20px;
-    box-shadow: 0 8px 16px rgba(253, 182, 204, 0.25);
+  max-width: 600px;
+  margin: 0 auto 40px auto;
+  background: linear-gradient(135deg, #ffffff, #fff8fb);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 8px 16px rgba(255, 182, 204, 0.25);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.details-container:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(255, 182, 204, 0.35);
 }
 
 .detail-item {
-    display: flex;
-    align-items: center;
-    margin-bottom: 14px;
-    padding-bottom: 10px;
-    border-bottom: 1px dashed #f3c1d3;
+  display: flex;
+  align-items: center;
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px dashed #f3c1d3;
 }
 
 .detail-icon {
-    font-size: 20px;
-    margin-right: 15px;
-    color: #ec407a;
+  font-size: 20px;
+  margin-right: 15px;
+  color: #ff70a6;
+  transition: transform 0.3s ease;
+}
+
+.detail-item:hover .detail-icon {
+  transform: scale(1.1);
 }
 
 .detail-text {
-    flex-grow: 1;
+  flex-grow: 1;
 }
 
 .detail-name {
-    font-weight: 600;
-    color: #c2185b;
-    display: block;
-    margin-bottom: 2px;
+  font-weight: 600;
+  color: #ff70a6;
+  display: block;
+  margin-bottom: 2px;
 }
 
 .detail-percent {
-    font-size: 14px;
-    color: #8e3b5d;
-    margin-right: 8px;
+  font-size: 14px;
+  color: #ff99bb;
+  margin-right: 8px;
 }
 
 .detail-amount {
-    font-size: 14px;
-    color: #6a1b9a;
+  font-size: 14px;
+  color: #6a1b9a;
 }
 
+/* Responsive Design */
+@media (max-width: 480px) {
+  .container {
+    padding: 0 10px;
+  }
+
+  .analytics-header {
+    padding: 15px 10px;
+  }
+
+  .back-button {
+    font-size: 32px;
+  }
+
+  h1 {
+    font-size: 24px;
+  }
+
+  .date-picker {
+    font-size: 14px;
+  }
+
+  .month-nav {
+    font-size: 16px;
+    padding: 0 8px;
+  }
+
+  .chart-tabs {
+    margin-top: 15px;
+    gap: 6px;
+  }
+
+  .chart-tab {
+    padding: 6px 14px;
+    font-size: 12px;
+  }
+
+  .details-container {
+    margin-bottom: 30px;
+    padding: 15px;
+  }
+
+  .detail-item {
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+  }
+
+  .detail-icon {
+    font-size: 18px;
+    margin-right: 12px;
+  }
+
+  .detail-name {
+    font-size: 14px;
+  }
+
+  .detail-percent {
+    font-size: 12px;
+  }
+
+  .detail-amount {
+    font-size: 12px;
+  }
+}

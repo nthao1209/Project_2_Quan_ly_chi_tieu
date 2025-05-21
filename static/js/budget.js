@@ -1,3 +1,17 @@
+// Khởi tạo sự kiện sau khi DOM đã sẵn sàng
+document.addEventListener("DOMContentLoaded", function() {
+  document.getElementById('add-button').addEventListener('click', addBudget);
+
+  const toggleBtn = document.getElementById('toggle-add-form');
+  const addForm = document.querySelector('.add-budget-form');
+
+  toggleBtn.addEventListener('click', () => {
+    addForm.classList.toggle('show');
+  });
+
+  initBudgetEvents(); // Khởi tạo các sự kiện còn lại
+});
+
 // Hàm thêm ngân sách bằng API
 async function addBudget() {
   const categoryId = document.getElementById('new-category').value;
@@ -27,7 +41,7 @@ async function addBudget() {
     const data = await res.json();
     if (res.ok) {
       alert('Đã thêm ngân sách!');
-      location.reload(); 
+      location.reload();
     } else {
       alert(data.error || 'Có lỗi xảy ra khi thêm ngân sách.');
     }
@@ -37,10 +51,98 @@ async function addBudget() {
   }
 }
 
-// Gắn sự kiện click cho nút "Thêm"
-document.addEventListener("DOMContentLoaded", function() {
-  document.getElementById('add-button').addEventListener('click', addBudget);
-});
+// Hàm khởi tạo các sự kiện
+function initBudgetEvents() {
+  // Xử lý xóa ngân sách
+  document.querySelectorAll('.delete-button').forEach(button => {
+    button.addEventListener('click', function() {
+      const budgetId = this.closest('.budget-item').getAttribute('data-id');
+      deleteBudget(budgetId);
+    });
+  });
+
+  // Xử lý mở/đóng chi tiết
+  document.querySelectorAll('.toggle-details').forEach(button => {
+    button.addEventListener('click', function() {
+      const details = this.closest('.budget-item').querySelector('.budget-details');
+      const icon = this.querySelector('i');
+
+      if (details.style.display === 'none' || !details.style.display) {
+        details.style.display = 'block';
+        icon.classList.remove('fa-chevron-down');
+        icon.classList.add('fa-chevron-up');
+      } else {
+        details.style.display = 'none';
+        icon.classList.remove('fa-chevron-up');
+        icon.classList.add('fa-chevron-down');
+      }
+    });
+  });
+
+  // Xử lý cập nhật ngân sách
+  document.querySelectorAll('.update-button').forEach(button => {
+    button.addEventListener('click', function() {
+      const form = this.closest('.budget-item').querySelector('.update-form');
+      const details = this.closest('.budget-item').querySelector('.budget-details');
+
+      if (details.style.display === 'block') {
+        details.style.display = 'none';
+        const toggleIcon = this.closest('.budget-item').querySelector('.toggle-details i');
+        toggleIcon.classList.remove('fa-chevron-up');
+        toggleIcon.classList.add('fa-chevron-down');
+      }
+
+      form.style.display = form.style.display === 'block' ? 'none' : 'block';
+    });
+  });
+
+  // Xử lý hủy cập nhật
+  document.querySelectorAll('.cancel-update').forEach(button => {
+    button.addEventListener('click', function() {
+      const form = this.closest('.update-form');
+      form.style.display = 'none';
+    });
+  });
+
+  // Xử lý xác nhận cập nhật
+  document.querySelectorAll('.confirm-update').forEach(button => {
+    button.addEventListener('click', async function() {
+      const item = this.closest('.budget-item');
+      const budgetId = item.getAttribute('data-id');
+      const amount = item.querySelector('.update-amount').value.trim();
+      const start = item.querySelector('.update-start').value.trim();
+      const end = item.querySelector('.update-end').value.trim();
+
+      if (!amount || !start || !end) {
+        alert("Vui lòng điền đầy đủ thông tin.");
+        return;
+      }
+
+      try {
+        const res = await fetch(`/budgets/update/${budgetId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            limit_amount: amount,
+            start_date: start,
+            end_date: end
+          })
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+          alert("Cập nhật thành công!");
+          location.reload();
+        } else {
+          alert(data.error || "Có lỗi khi cập nhật.");
+        }
+      } catch (err) {
+        console.error(err);
+        alert("Không thể kết nối máy chủ.");
+      }
+    });
+  });
+}
 
 // Hàm xoá ngân sách
 async function deleteBudget(budgetId) {
@@ -55,72 +157,11 @@ async function deleteBudget(budgetId) {
       alert('Đã xóa ngân sách!');
       location.reload();
     } else {
-      const errorMessage = data.error || 'Có lỗi xảy ra khi thêm ngân sách.';
-      alert(errorMessage);    }
+      const errorMessage = data.error || 'Có lỗi xảy ra khi xóa ngân sách.';
+      alert(errorMessage);
+    }
   } catch (err) {
     console.error(err);
     alert('Không thể kết nối tới máy chủ.');
   }
 }
-
-document.querySelectorAll('.delete-button').forEach(button => {
-  button.addEventListener('click', function () {
-    const budgetId = this.closest('.item').getAttribute('data-id');
-    deleteBudget(budgetId);
-  });
-});
-
-// Khi nhấn nút ✏️ hiện form cập nhật
-document.querySelectorAll('.update-button').forEach(button => {
-  button.addEventListener('click', function () {
-    const form = this.parentElement.querySelector('.update-form');
-    form.style.display = (form.style.display === 'none') ? 'block' : 'none';
-  });
-});
-
-// Khi nhấn nút "Cập nhật" trong form
-document.querySelectorAll('.confirm-update').forEach(button => {
-  button.addEventListener('click', async function () {
-    const item = this.closest('.item');
-    const budgetId = item.getAttribute('data-id');
-    const amount = item.querySelector('.update-amount').value.trim();
-    const start = item.querySelector('.update-start').value.trim();
-    const end = item.querySelector('.update-end').value.trim();
-
-    if (!amount || !start || !end) {
-      alert("Vui lòng điền đầy đủ thông tin.");
-      return;
-    }
-
-    try {
-      const res = await fetch(`/budgets/update/${budgetId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          limit_amount: amount,
-          start_date: start,
-          end_date: end
-        })
-      });
-
-      const data = await res.json();
-      if (res.ok) {
-        alert("Cập nhật thành công!");
-        location.reload();
-      } else {
-        alert(data.error || "Có lỗi khi cập nhật.");
-      }
-    } catch (err) {
-      console.error(err);
-      alert("Không thể kết nối máy chủ.");
-    }
-  });
-});
-
-
-document.querySelectorAll('.icon').forEach(icon => {
-  icon.addEventListener('click', function () {
-    const details = this.closest('.item').querySelector('.budget-details');
-    details.style.display = (details.style.display === 'none') ? 'block' : 'none';
-  });
-});

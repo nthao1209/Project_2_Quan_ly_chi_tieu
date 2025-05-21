@@ -3,12 +3,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
     form.addEventListener('submit', async function(event) {
         event.preventDefault();
+        console.log('Form submit event fired');  // test
+
 
         const formData = {
+            name: form.querySelector('input[name="name"]').value,
+            ngay_sinh: form.querySelector('input[name="ngay_sinh"]').value,
+            gioi_tinh: form.querySelector('select[name="gioi_tinh"]').value,
             phone: form.querySelector('input[name="phone"]').value,
             email: form.querySelector('input[name="email"]').value,
             currentPassword: form.querySelector('input[name="currentPassword"]').value,
-            newPassword: form.querySelector('input[name="newPassword"]').value
+            newPassword: form.querySelector('input[name="newPassword"]').value,
+            confirmPassword: form.querySelector('input[name="confirmPassword"]').value
         };
 
         try {
@@ -24,7 +30,7 @@ document.addEventListener('DOMContentLoaded', function() {
             alert(result.message);
 
             if (response.ok) {
-                window.location.href = '/register';
+                window.location.href = '/home';
             }
         } catch (error) {
             console.error('Error:', error);

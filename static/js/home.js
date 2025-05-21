@@ -1,6 +1,5 @@
 let currentViewDate = new Date();
 
-// DOM Content Loaded event
 document.addEventListener('DOMContentLoaded', function() {
     // Xử lý dropdown avatar
     const avatar = document.querySelector('.avatar-wrapper');
@@ -50,43 +49,38 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function setupNavigationButtons() {
-    const categoryBtn = document.querySelector('.category-btn');
-    const accountBtn = document.querySelector('.account-btn');
-    const analyticsBtn = document.querySelector('.analytics-btn');
-    const budgetBtn = document.querySelector('.budget-btn');
-    const savingGoalBtn = document.querySelector('.saving-goal-btn');
-    const floatingBtn = document.querySelector('.floating-btn');
+    const navButtons = document.querySelectorAll('.nav-btn');
+    
+    navButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const text = this.textContent.trim();
+            let url = '/';
+            
+            switch(text) {
+                case 'Danh mục':
+                    url = '/categories-page';
+                    break;
+                case 'Tài khoản':
+                    url = '/bank_account';
+                    break;
+                case 'Phân tích':
+                    url = '/analytics';
+                    break;
+                case 'Ngân sách':
+                    url = '/budgets';
+                    break;
+                case 'Mục tiêu tiết kiệm':
+                    url='/home_saving_goal';
+                    break;
+                default:
+                    return;
+            }
+            
+            window.location.href = url;
+        });
+    });
 
-    if (categoryBtn) {
-        categoryBtn.addEventListener('click', e => {
-            e.preventDefault();
-            window.location.href = '/categories-page';
-        });
-    }
-    if (accountBtn) {
-        accountBtn.addEventListener('click', e => {
-            e.preventDefault();
-            window.location.href = '/bank_account';
-        });
-    }
-    if (analyticsBtn) {
-        analyticsBtn.addEventListener('click', e => {
-            e.preventDefault();
-            window.location.href = '/analytics';
-        });
-    }
-    if (budgetBtn) {
-        budgetBtn.addEventListener('click', e => {
-            e.preventDefault();
-            window.location.href = '/budgets';
-        });
-    }
-    if (savingGoalBtn) {
-        savingGoalBtn.addEventListener('click', e => {
-            e.preventDefault();
-            window.location.href = '/home_saving_goal';
-        });
-    }
+    const floatingBtn = document.querySelector('.floating-btn');
     if (floatingBtn) {
         floatingBtn.addEventListener('click', e => {
             e.preventDefault();
@@ -94,6 +88,7 @@ function setupNavigationButtons() {
         });
     }
 }
+
 
 async function fetchTransactions() {
     const month = currentViewDate.getMonth() + 1;
@@ -119,7 +114,6 @@ function updateMonthDisplay() {
 function updateRecentTransactions(transactions) {
     const container = document.querySelector('.recent-transactions');
     if (!container) return;
-
     container.innerHTML = '';
 
     if (transactions.length === 0) {
@@ -127,81 +121,101 @@ function updateRecentTransactions(transactions) {
         return;
     }
 
+    // Nhóm giao dịch theo ngày
+    const grouped = {};
     transactions.forEach(trans => {
-        const box = document.createElement('div');
-        box.className = 'recent-transaction-box';
-        box.setAttribute('data-type', trans.type);
-        box.innerHTML = `
-            <div class="transaction-category">
-                <div class="category-icon">${trans.icon}</div>
-                <div>
-                    <div>${trans.category_name}</div>
-                    <div style="font-size: 12px; color: #777;">${trans.account_name}</div>
+        if (!grouped[trans.transaction_date]) {
+            grouped[trans.transaction_date] = [];
+        }
+        grouped[trans.transaction_date].push(trans);
+    });
+
+
+
+    // Duyệt qua từng ngày và tạo phần tử hiển thị
+    Object.keys(grouped).sort((a, b) => new Date(b) - new Date(a)).forEach(date => {
+        const dateGroup = document.createElement('div');
+        dateGroup.className = 'transaction-date-group';
+
+        const dateTitle = document.createElement('div');
+        dateTitle.className = 'transaction-date-title';
+        dateTitle.textContent = date; 
+        dateGroup.appendChild(dateTitle);
+
+        grouped[date].forEach(trans => {
+            const box = document.createElement('div');
+            box.className = 'recent-transaction-box';
+            box.setAttribute('data-type', trans.type);
+            box.innerHTML = `
+                <div class="transaction-category">
+                    <div class="category-icon">${trans.icon}</div>
+                    <div>
+                        <div>${trans.category_name}</div>
+                        <div style="font-size: 12px; color: #777;">${trans.account_name}</div>
+                    </div>
                 </div>
-            </div>
-            <div class="transaction-amount ${trans.type}">
-                ${trans.type === 'income' ? '+' : '-'}${formatNumber(trans.amount)} ₫
+                <div class="transaction-amount ${trans.type}">
+                    ${trans.type === 'income' ? '+' : '-'}${formatNumber(trans.amount)} ₫
+                </div>
+            `;
+            box.addEventListener('click', () => showTransactionDetail(trans));
+            dateGroup.appendChild(box);
+        });
+
+        container.appendChild(dateGroup);
+    });
+
+    // Hàm hiển thị chi tiết (giữ nguyên)
+    function showTransactionDetail(trans) {
+        const detailHTML = `
+            <div class="transaction-detail-modal">
+                <div class="modal-header">
+                    <span class="close-btn">&times;</span>
+                    <div class="action-icons">
+                        <i class="fas fa-edit edit-btn" title="Chỉnh sửa"></i>
+                        <i class="fas fa-trash-alt delete-btn" title="Xóa"></i>
+                    </div>
+                </div>
+                <div class="modal-content">
+                    <div class="category-icon">${trans.icon} ${trans.category_name} </div>
+                    <p>Số tiền: ${trans.type === 'income' ? '+' : '-'} ${formatNumber(trans.amount)} ₫</p>
+                    <p>Ngày: ${trans.transaction_date}</p>
+                    <p>Giờ: ${trans.transaction_time}</p>
+                    <p>Tài khoản: ${trans.account_name}</p>
+                    <p>Ghi chú: ${trans.note}</p>
+                </div>
             </div>
         `;
 
-        box.addEventListener('click', () =>  showTransactionDetail(trans));
-        container.appendChild(box);
-    });
+        const modal = document.createElement('div');
+        modal.className = 'modal-overlay';
+        modal.innerHTML = detailHTML;
+        document.body.appendChild(modal);
+        document.body.classList.add('modal-open');
 
-    // Hàm hiển thị chi tiết giao dịch
-function showTransactionDetail(trans) {
-    const detailHTML = `
-        <div class="transaction-detail-modal">
-            <div class="modal-header">
-                <span class="close-btn">&times;</span>
-                <div class="action-icons">
-                    <i class="fas fa-edit edit-btn" title="Chỉnh sửa"></i>
-                    <i class="fas fa-trash-alt delete-btn" title="Xóa"></i>
-                </div>
-            </div>
-            <div class="modal-content">
-                <div class="category-icon">${trans.icon} ${trans.category_name} </div>
-                <p>Số tiền: ${trans.type === 'income' ? '+' : '-'} ${formatNumber(trans.amount)} ₫</p>
-                <p>Ngày: ${trans.transaction_date}</p>
-                <p>Giờ: ${trans.transaction_time}</p>
-                <p>Tài khoản: ${trans.account_name}</p>
-            </div>
-        </div>
-    `;
+        modal.querySelector('.close-btn').addEventListener('click', () => {
+            document.body.removeChild(modal);
+            document.body.classList.remove('modal-open');
+        });
 
-    // Tạo và thêm modal vào body
-    const modal = document.createElement('div');
-    modal.className = 'modal-overlay';
-    modal.innerHTML = detailHTML;
-    document.body.appendChild(modal);
+        modal.querySelector('.delete-btn').addEventListener('click', () => {
+            if (confirm('Bạn có chắc chắn muốn xóa giao dịch này?')) {
+                fetch(`/transactions/delete/${trans.transaction_id}`, {
+                    method: 'POST'
+                })
+                    .then(res => {
+                        if (res.ok) location.reload();
+                        else alert('Xóa thất bại.');
+                    });
+            }
+        });
 
-    document.body.classList.add('modal-open'); // Thêm class để khóa cuộn trang
-
-    // Thêm sự kiện đóng modal
-    modal.querySelector('.close-btn').addEventListener('click', () => {
-        document.body.removeChild(modal);
-        document.body.classList.remove('modal-open'); // Bỏ class khóa cuộn trang
-    });
-    // Gắn sự kiện xóa
-    modal.querySelector('.delete-btn').addEventListener('click', () => {
-        if (confirm('Bạn có chắc chắn muốn xóa giao dịch này?')) {
-            fetch(`/transactions/delete/${trans.transaction_id}`, {
-                method: 'POST'
-            })
-            .then(res => {
-                if (res.ok) location.reload();
-                else alert('Xóa thất bại.');
-            });
-        }
-    });
-
-// Gắn sự kiện chỉnh sửa
-modal.querySelector('.edit-btn').addEventListener('click', () => {
-    window.location.href = `/transactions/edit/${trans.transaction_id}`;
-});
-
+        modal.querySelector('.edit-btn').addEventListener('click', () => {
+            window.location.href = `/transactions/edit/${trans.transaction_id}`;
+        });
+    }
 }
-}
+
 
 
 function updateFinancialSummary(transactions) {
@@ -234,6 +248,12 @@ function filterTransactions(type) {
                             type === 'income' && transType === 'income' ? 'flex' :
                             type === 'expense' && transType === 'expense' ? 'flex' : 'none';
     });
+
+    const dateGroups = document.querySelectorAll('.transaction-date-group');
+    dateGroups.forEach(group => {
+        const visibleTransactions = group.querySelectorAll('.recent-transaction-box[style="display: flex;"]');
+        group.style.display = visibleTransactions.length > 0 ? 'block' : 'none';
+    });
 }
 
 function formatNumber(num) {
@@ -250,3 +270,29 @@ function showErrorMessage(message) {
         notification.remove();
     }, 3000);
 }
+
+document.getElementById("deleteAccountLink").addEventListener("click", function (e) {
+    e.preventDefault();
+
+    if (confirm("Bạn có chắc chắn muốn xóa tài khoản? Hành động này không thể hoàn tác.")) {
+        fetch("/delete_account", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
+        .then((response) => {
+            if (response.ok) {
+                alert("Tài khoản đã bị xóa.");
+                window.location.href = "/login"; 
+            } else {
+                response.json().then(data => {
+                    alert("Lỗi: " + (data.message || "Không thể xóa tài khoản"));
+                });
+            }
+        })
+        .catch((error) => {
+            alert("Lỗi kết nối: " + error.message);
+        });
+    }
+});

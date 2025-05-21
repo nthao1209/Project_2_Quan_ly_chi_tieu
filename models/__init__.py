@@ -11,3 +11,4 @@ from .transaction import Transaction
 from .account import Account
 from .user import User
 from .deposit_transaction import DepositTransaction
+from .transfertransaction import TransferTransaction

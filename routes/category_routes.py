@@ -70,17 +70,8 @@ def categories_page():
     if not user_id:
         return jsonify({'error': 'Not logged in'}), 401
     
-
-
-    expenses = Category.query.filter(
-        ((Category.user_id == user_id) | (Category.user_id.is_(None))) &
-        (Category.type == 'Chi tiêu')
-    ).all()
-
-    income = Category.query.filter(
-        ((Category.user_id == user_id) | (Category.user_id.is_(None))) &
-        (Category.type == 'Thu nhập')
-    ).all()
+    expenses = Category.query.filter_by(user_id=user_id, type='Chi tiêu').all()
+    income = Category.query.filter_by(user_id=user_id, type='Thu nhập').all()
 
     return render_template('category.html', expenses_categories=expenses, income_categories=income)
 

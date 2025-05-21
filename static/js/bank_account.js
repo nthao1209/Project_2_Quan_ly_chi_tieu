@@ -45,63 +45,64 @@ document.addEventListener('DOMContentLoaded', function () {
     // Gán sự kiện cho nút "Hủy" form cập nhật
     document.getElementById('cancel-update').addEventListener('click', function () {
         document.getElementById('update-account-form-container').style.display = 'none';
+        document.getElementById('overlay').style.display = 'none'; // Ẩn overlay
     });
+    document.getElementById('add-account-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+        saveNewAccount();
+    });
+
 });
 
-// Thêm tài khoản mới
 function addAccount() {
-    const list = document.getElementById('accountList');
-    const div = document.createElement('div');
-    div.className = 'account-item';
-    div.innerHTML = `
-        <input type="text" name="account_name" placeholder="Tên tài khoản" class="new_account_name">
-        <input type="number" name="balance" placeholder="Số dư" required>
-        <input type="text" name="currency" placeholder="Loại tiền tệ" required>
-        <button onclick="saveAccount(this)">Lưu</button>
-        <button onclick="cancelAccount(this)">Hủy</button>`;
-    list.appendChild(div);
-}
-
-// Lưu tài khoản mới
-function saveAccount(button) {
-    const nameInput = button.parentElement.querySelector('.new_account_name');
-    const accountName = nameInput.value;
-
-    if (!accountName.trim()) {
-        alert('Vui lòng nhập tên tài khoản');
-        return;
+      document.getElementById('add-account-modal').style.display = 'block';
+      document.getElementById('overlay').style.display = 'block'; // Hiển thị overlay
     }
 
-    fetch('/bank_account/add', {
+    // Đóng modal thêm tài khoản
+    function closeAddAccountModal() {
+      document.getElementById('add-account-modal').style.display = 'none';
+      document.getElementById('overlay').style.display = 'none'; // Ẩn overlay
+    }
+
+    // Lưu tài khoản mới
+    function saveNewAccount() {
+      const accountName = document.getElementById('new_account_name').value;
+      const balance = document.getElementById('new_balance').value;
+      const currency = document.getElementById('new_currency').value;
+
+      if (!accountName.trim()) {
+        alert('Vui lòng nhập tên tài khoản');
+        return;
+      }
+
+      fetch('/bank_account/add', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            account_name: accountName,
-            balance: button.parentElement.querySelector('input[name="balance"]').value,
-            currency: button.parentElement.querySelector('input[name="currency"]').value
+          account_name: accountName,
+          balance: balance,
+          currency: currency
         })
-    })
-        .then(res => res.json())
-        .then(data => {
-            if (data.message) {
-                alert('Thêm tài khoản thành công!');
-                location.reload();
-            } else {
-                alert('Có lỗi xảy ra khi thêm tài khoản!');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Có lỗi xảy ra khi thêm tài khoản!');
-        });
-}
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.message) {
+          alert('Thêm tài khoản thành công!');
+          location.reload(); // Reload lại trang
+        } else {
+          alert('Có lỗi xảy ra khi thêm tài khoản!');
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('Có lỗi xảy ra khi thêm tài khoản!');
+      });
 
-// Hủy thêm tài khoản
-function cancelAccount(button) {
-    button.parentElement.remove();
-}
+      closeAddAccountModal(); // Đóng form sau khi lưu thành công
+    }
 
 // Xóa tài khoản
 function deleteAccount(account_id) {
@@ -147,6 +148,7 @@ function setAsDefault(account_id) {
 function showUpdateForm(account_id) {
     const formContainer = document.getElementById('update-account-form-container');
     formContainer.style.display = 'block';
+    document.getElementById('overlay').style.display = 'block'; // Hiển thị overlay
 
     fetch(`/bank_account/${account_id}`)
         .then(res => res.json())

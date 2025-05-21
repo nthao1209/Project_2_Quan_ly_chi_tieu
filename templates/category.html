@@ -2,33 +2,17 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Danh mục</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/category.css') }}">
-  <script src="{{ url_for('static', filename='js/category.js') }}" defer></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-  <style>
-    .tab-container button {
-      margin-right: 10px;
-    }
-    .category-list {
-      display: none;
-    }
-    .category-list.active {
-      display: block;
-    }
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="{{ url_for('static', filename='js/category.js') }}" defer></script>
 </head>
 <body>
   <div class="header">
-    <div class="back-button" id = "back">←</div>
-    <script>
-      document.getElementById('back').addEventListener('click', function () {
-        window.location.href = '/home'; 
-      });
-    </script>
-
-    <div class="title"><h1> Danh mục </h1></div>
+    <div class="back-button" id="back"><i class="fas fa-arrow-left"></i></div>
+    <div class="title"><h1>Danh mục</h1></div>
   </div>
 
   <div class="tab-container">
@@ -52,9 +36,9 @@
         <div class="category-actions">
           <div class="menu-icon"><i class="fas fa-bars"></i></div>
           <div class="delete-button" data-id="{{ category.category_id }}">
-            <i class="fas fa-times"></i>
+            <i class="fas fa-trash"></i>
           </div>
-      </div>
+        </div>
       </div>
     {% endfor %}
   </div>
@@ -63,26 +47,26 @@
   <div class="category-list income">
     <div class="group-title">Danh mục thu nhập</div>
     {% for category in income_categories %}
-      <div class="category-item" data-id="{{category.category_id}}" data-type="thu nhập">
+      <div class="category-item" data-id="{{ category.category_id }}" data-type="thu nhập">
         <div class="category-info">
           <span class="icon">{{ category.icon }}</span>
           <span class="text">{{ category.name }}</span>
         </div>
         <div class="category-actions">
           <div class="menu-icon"><i class="fas fa-bars"></i></div>
-          <div class="delete-button" data-id="{{category.category_id }}">
-            <i class="fas fa-times"></i>
+          <div class="delete-button" data-id="{{ category.category_id }}">
+            <i class="fas fa-trash"></i>
           </div>
-      </div>
+        </div>
       </div>
     {% endfor %}
   </div>
 
-  <div class="add-button">+ Thêm vào</div>
+  <div class="add-button">+ Thêm danh mục</div>
 
-  <div class="category-form" style="display: none;">
+  <div class="category-form">
     <div class="modal-content">
-      <span class="close-modal">&times;</span>
+      <span class="close-modal">×</span>
       <h2>Thêm danh mục</h2>
       <input type="text" placeholder="Tên danh mục" id="category-name">
       <input type="text" placeholder="Icon" id="category-icon">
@@ -96,6 +80,7 @@
   </div>
 
   <script>
+    // Tab switching
     function showCategory(category) {
       const lists = document.querySelectorAll('.category-list');
       lists.forEach(list => list.classList.remove('active'));
@@ -109,7 +94,29 @@
         tabs[1].classList.add('active');
       }
     }
-  </script>
 
+    // Back button
+    document.getElementById('back').addEventListener('click', function () {
+      window.location.href = '/home';
+    });
+
+    // Modal handling
+    const addButton = document.querySelector('.add-button');
+    const categoryForm = document.querySelector('.category-form');
+    const closeModal = document.querySelector('.close-modal');
+    const cancelButton = document.querySelector('#cancel-category');
+
+    addButton.addEventListener('click', () => {
+      categoryForm.style.display = 'flex';
+    });
+
+    closeModal.addEventListener('click', () => {
+      categoryForm.style.display = 'none';
+    });
+
+    cancelButton.addEventListener('click', () => {
+      categoryForm.style.display = 'none';
+    });
+  </script>
 </body>
 </html>

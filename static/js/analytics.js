@@ -32,7 +32,7 @@ function fetchAnalyticsData(month, year, type = 'expense') {
                     ctx.font = '16px Arial';
                     ctx.fillStyle = '#000';
                     ctx.fillText('Tổng ' , width / 2, height / 2 - 10);
-                    ctx.font = '20px Arial';
+                    ctx.font = '15px Arial';
                     ctx.fillText(`${total.toLocaleString('vi-VN')} đ`, width / 2, height / 2 + 10);
                     ctx.restore();
                 }
@@ -63,7 +63,7 @@ function fetchAnalyticsData(month, year, type = 'expense') {
                 options: {
                     responsive: true,
                     plugins: {
-                        legend: { position: 'top' },
+                        legend: { position: 'bottom' },
                         tooltip: {
                             callbacks: {
                                 label: function (context) {

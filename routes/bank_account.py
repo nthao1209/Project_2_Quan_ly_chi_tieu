@@ -76,6 +76,7 @@ def add_update_similar(data,is_update=False,account_id=None):
 @bank_account_bp.route('/bank_account/add', methods=['POST'])
 def add_bank_accounts():
     data = request.get_json()
+    print("Dữ liệu nhận được để thêm tài khoản ngân hàng:", data)
     return add_update_similar(data,is_update=False)
 
 # Cập nhật tài khoản ngân hàng
@@ -107,19 +108,28 @@ def set_default_bank_account(account_id):
     if not user_id:
         return jsonify({'error': 'Người dùng chưa đăng nhập.'}), 401
 
-    # Đặt tất cả các tài khoản của người dùng thành không phải mặc định
+    # Đặt tất cả tài khoản về không mặc định
     Account.query.filter_by(user_id=user_id).update({'is_default': False})
     db.session.commit()
 
-    # Đặt tài khoản được chỉ định thành mặc định
+    # Đặt tài khoản được chọn làm mặc định
     account = Account.query.get(account_id)
-    if not account:
-        return jsonify({'error': 'Tài khoản ngân hàng không tồn tại.'}), 404
+    if not account or account.user_id != user_id:
+        return jsonify({'error': 'Tài khoản không tồn tại hoặc không thuộc về người dùng.'}), 404
 
     account.is_default = True
     db.session.commit()
 
-    return jsonify({'message': 'Tài khoản ngân hàng đã được đặt làm mặc định.'}), 200
+    # Trả về thông tin tài khoản để cập nhật giao diện
+    return jsonify({
+        'message': 'Tài khoản đã được đặt làm mặc định.',
+        'account': {
+            'account_name': account.account_name,
+            'balance': account.balance,
+            'currency': account.currency
+        }
+    }), 200
+
 
 @bank_account_bp.route('/bank_account/<int:account_id>', methods=['GET'])
 def get_single_bank_account(account_id):

@@ -12,16 +12,23 @@ def seed_default_categories():
         {'name': 'Giáo dục', 'icon': '🎓','type':'Chi tiêu'},
         {'name': 'Vật nuôi', 'icon': '🐈','type':'Chi tiêu'}
     ]
+
+    income_categories = [
+        {'name': 'Tiền lương', 'icon': '💼', 'type': 'Thu nhập'},
+        {'name': 'Tiền làm thêm', 'icon': '💸', 'type': 'Thu nhập'}
+    ]
+
     
-    for category in expenses_categories:
-        # Chỉ check các category mặc định (user_id=None)
+    all_categories = expenses_categories + income_categories
+
+    for category in all_categories:
         existing_category = Category.query.filter_by(name=category['name'], user_id=None).first()
         if not existing_category:
             new_category = Category(
                 name=category['name'],
                 icon=category['icon'],
                 type=category['type'],
-                user_id=None  # Quan trọng: gán user_id = None để là mặc định dùng chung              
+                user_id=None
             )
             db.session.add(new_category)
 

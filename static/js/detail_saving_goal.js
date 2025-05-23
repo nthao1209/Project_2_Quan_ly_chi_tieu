@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", function () {
   let currentGoalId = null;
   const modal = document.getElementById('edit-form');
   const formTitle = document.getElementById('form-title');
+  const editForm = document.getElementById('edit-goal-form');
 
   // Function to open edit form
   window.openEditForm = function(goalId) {
@@ -110,34 +111,36 @@ document.addEventListener("DOMContentLoaded", function () {
       });
   });
 
-  // Delete confirmation
-  window.confirmDelete = function() {
-      if (!currentGoalId) return;
-      
-      if (confirm('Bạn có chắc chắn muốn xóa mục tiêu này? Toàn bộ lịch sử nạp tiền cũng sẽ bị xóa.')) {
-          deleteGoal(currentGoalId);
-      }
-  };
+  
 
-  // Delete goal function
-  function deleteGoal(goalId) {
-      fetch(`/goals/delete/${goalId}`, {
-          method: 'DELETE'
-      })
-      .then(response => {
-          if (!response.ok) throw new Error('Lỗi kết nối với máy chủ');
-          return response.json();
-      })
-      .then(data => {
-          if (data.error) throw new Error(data.error);
-          showAlert('success', 'Đã xóa mục tiêu thành công!');
-          window.location.reload();
-        })
-      .catch(error => {
-          console.error('Error:', error);
-          showAlert('error', 'Lỗi khi xóa mục tiêu: ' + error.message);
-      });
+window.confirmDelete = function() {
+  if (!currentGoalId) {
+    showAlert('error', 'Không tìm thấy mục tiêu cần xóa');
+    return;
   }
+  if (confirm("Bạn có chắc chắn muốn xóa mục tiêu này?")) {
+    fetch(`/goals/delete/${currentGoalId}`, { 
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    .then(response => {
+      if (!response.ok) throw new Error('Xóa thất bại');
+      return response.json();
+    })
+    .then(data => {
+      showAlert('success', 'Đã xóa mục tiêu thành công!');
+      setTimeout(() => {
+         window.location.reload()
+      }, 300);
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      showAlert('error', 'Lỗi khi xóa: ' + error.message);
+    });
+  }
+};
 
   // Helper function to show alerts
   function showAlert(type, message) {

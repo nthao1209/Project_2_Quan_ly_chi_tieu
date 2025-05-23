@@ -8,11 +8,15 @@ from flask_mail import Mail
 from routes.user_route import redis_client
 import traceback
 from utils.seed_default_category import seed_default_categories
+from dotenv import load_dotenv
+import os
 
 
 
+load_dotenv()
 app = Flask(__name__)
-app.secret_key = "supersecretkey"
+app.secret_key = os.getenv("SECRET_KEY")
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL")
 app.register_blueprint(home.view)
 app.register_blueprint(user_route.user_bp)
 app.register_blueprint(forgot_password.forgot_password_bp)
@@ -25,16 +29,17 @@ app.register_blueprint(deposit_transaction_routes.deposit_bp)
 app.register_blueprint(analytics.analytics_bp)
 app.register_blueprint(admin_routes.admin_bp)
 app.register_blueprint(transfer_transaction_routes.transfer_bp)
-app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-app.config['MAIL_PORT'] = 465
-app.config['MAIL_USE_SSL'] = True  # Đảm bảo bạn sử dụng SSL với cổng 465
-app.config['MAIL_USE_TLS'] = False  # Không sử dụng TLS với cổng 465
-app.config['MAIL_USERNAME'] = 'nthao4744@gmail.com'  
-app.config['MAIL_PASSWORD'] = 'ddnp fpfn ptnb sctn  ' 
-app.config['MAIL_DEFAULT_SENDER'] = 'nthao4744@gmail.com'
-app.config["SUPERADMIN_SECRET"] = "123456"
+app.config['MAIL_SERVER'] = os.getenv("MAIL_SERVER")
+app.config['MAIL_PORT'] = int(os.getenv("MAIL_PORT", 465))
+app.config['MAIL_USE_SSL'] = os.getenv("MAIL_USE_SSL", "True") == "True"
+app.config['MAIL_USE_TLS'] = os.getenv("MAIL_USE_TLS", "False") == "True"
+app.config['MAIL_USERNAME'] = os.getenv("MAIL_USERNAME")
+app.config['MAIL_PASSWORD'] = os.getenv("MAIL_PASSWORD")
+app.config['MAIL_DEFAULT_SENDER'] = os.getenv("MAIL_DEFAULT_SENDER")
+
+app.config["SUPERADMIN_SECRET"] = os.getenv("SUPERADMIN_SECRET")
 mail.init_app(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:12092004@localhost:5432/Quan_ly_chi_tieu_ca_nhan'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 

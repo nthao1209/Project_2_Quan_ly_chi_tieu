@@ -25,6 +25,8 @@ $(document).ready(function () {
                 // Hiển thị phần trăm hoàn thành
                 $('#completion_percentage').text(response.completion_percentage.toFixed(2));
                 $('#result').show();
+                    window.location.href = '/detail_saving_goal';
+
             },
             error: function (error) {
                 alert('Có lỗi xảy ra: ' + error.responseJSON.error);

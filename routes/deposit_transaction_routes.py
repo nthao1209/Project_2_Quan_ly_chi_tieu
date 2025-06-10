@@ -73,7 +73,10 @@ def deposit_money():
         completion_percentage = (total_deposited / goal.target_amount) * 100
         
         # Trả về kết quả
-        return jsonify({'message': 'Nạp tiền thành công'}), 200
+        return jsonify({
+            'message': 'Nạp tiền thành công',
+            'completion_percentage': float(completion_percentage)  # đảm bảo kiểu float
+        }), 200
 
     except Exception as e:
         db.session.rollback()
